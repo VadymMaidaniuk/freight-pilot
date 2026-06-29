@@ -1,0 +1,29 @@
+import type { RateExtraction, RFQExtraction } from "./schemas";
+
+export type AIProviderName = "fixture" | "claude" | "openrouter" | "lmstudio";
+
+export interface AIService {
+  extractRFQ(input: {
+    sourceType: "email" | "conversation" | "call_notes";
+    rawText: string;
+  }): Promise<RFQExtraction>;
+
+  normalizeRateReply(input: {
+    rawText: string;
+    sourceType: "email" | "messy_text" | "xlsx";
+  }): Promise<RateExtraction>;
+
+  generateClarificationDraft(rfqCaseId: string): Promise<string>;
+  generateRFQDraft(rfqCaseId: string, agentId: string): Promise<string>;
+  generateCustomerQuoteDraft(quoteId: string): Promise<string>;
+}
+
+export class AIValidationFallbackError extends Error {
+  constructor(
+    message = "Live extraction could not be safely validated. Demo-safe fallback used.",
+    readonly fallbackPayload?: unknown
+  ) {
+    super(message);
+    this.name = "AIValidationFallbackError";
+  }
+}

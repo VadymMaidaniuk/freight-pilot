@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FreightPilot - Quote Collection Round</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#dce3e8",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed-variant": "#005048",
+                    "inverse-on-surface": "#ebf2f7",
+                    "error-container": "#ffdad6",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#52dbca",
+                    "ink-text": "#1B2A3A",
+                    "surface-container-high": "#e2e9ee",
+                    "on-tertiary-fixed-variant": "#683d00",
+                    "on-primary-fixed": "#00201c",
+                    "on-surface": "#161d20",
+                    "tertiary-fixed": "#ffdcbc",
+                    "outline-variant": "#bbcac6",
+                    "secondary": "#4b607a",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#d2e4ff",
+                    "surface-container-low": "#eef5fa",
+                    "inverse-primary": "#52dbca",
+                    "secondary-fixed-dim": "#b3c8e6",
+                    "surface-container": "#e8eff4",
+                    "border-hairline": "#E3E9EF",
+                    "secondary-container": "#c9dffd",
+                    "on-secondary": "#ffffff",
+                    "inverse-surface": "#2a3135",
+                    "on-tertiary-fixed": "#2c1700",
+                    "primary-fixed": "#72f8e6",
+                    "surface-navy": "#0B2239",
+                    "surface-bright": "#f4faff",
+                    "tertiary": "#895100",
+                    "tertiary-fixed-dim": "#ffb86b",
+                    "primary-container": "#12b5a5",
+                    "on-secondary-fixed": "#051d33",
+                    "surface-container-lowest": "#ffffff",
+                    "ai-marker": "#12B5A5",
+                    "on-primary-container": "#00403a",
+                    "on-background": "#161d20",
+                    "primary": "#006a60",
+                    "surface": "#f4faff",
+                    "surface-tint": "#006a60",
+                    "error": "#ba1a1a",
+                    "surface-dim": "#d4dbe0",
+                    "on-secondary-fixed-variant": "#344861",
+                    "outline": "#6c7a77",
+                    "on-secondary-container": "#4e627c",
+                    "on-surface-variant": "#3c4947",
+                    "tertiary-container": "#df902e",
+                    "muted-text": "#5C6B7A",
+                    "surface-container-highest": "#dce3e8",
+                    "background": "#f4faff",
+                    "on-tertiary-container": "#533000"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "1rem",
+                    "stack-default": "1rem",
+                    "margin-page": "2rem",
+                    "topbar-height": "64px",
+                    "stack-compact": "0.5rem",
+                    "sidebar-width": "260px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "data-mono": ["JetBrains Mono"],
+                    "display-lg": ["Inter"],
+                    "title-sm": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "data-mono": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ai-border-left {
+            border-left: 2px solid #12B5A5;
+        }
+        body {
+            background-color: #f4faff;
+            color: #161d20;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f4faff;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #dce3e8;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-hidden">
+<!-- Sidebar (Shared Component JSON: SideNavBar) -->
+<aside class="fixed h-screen w-[260px] left-0 top-0 bg-surface-navy text-on-primary-fixed-variant flex flex-col py-6 z-50">
+<div class="px-6 mb-8">
+<h1 class="text-title-sm font-title-sm font-bold text-on-primary tracking-tight">FreightPilot</h1>
+<p class="text-[10px] uppercase tracking-widest text-primary-fixed opacity-60">Premium B2B Quote Desk</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 pl-5 py-3 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">inbox</span>
+<span class="font-label-caps text-label-caps">RFQ Inbox</span>
+</a>
+<!-- ACTIVE: Active Quotes -->
+<a class="flex items-center text-primary-fixed font-bold border-l-4 border-primary-fixed pl-4 py-3 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">request_quote</span>
+<span class="font-label-caps text-label-caps">Active Quotes</span>
+</a>
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 pl-5 py-3 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">fact_check</span>
+<span class="font-label-caps text-label-caps">Approvals</span>
+</a>
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 pl-5 py-3 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">hub</span>
+<span class="font-label-caps text-label-caps">Agent Network</span>
+</a>
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 pl-5 py-3 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">settings_input_component</span>
+<span class="font-label-caps text-label-caps">Integrations</span>
+</a>
+</nav>
+<div class="mt-auto px-5 pt-6 border-t border-white/5 space-y-1">
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 pl-5 py-2 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-sm">help</span>
+<span class="font-label-caps text-label-caps">Help Center</span>
+</a>
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 pl-5 py-2 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-sm">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<button class="mt-4 w-full bg-primary-container text-on-primary-container font-bold py-3 rounded-lg flex items-center justify-center gap-2 active:scale-95 duration-150">
+<span class="material-symbols-outlined">add</span>
+<span class="font-label-caps text-label-caps">New Quote</span>
+</button>
+</div>
+</aside>
+<!-- Top Bar (Shared Component JSON: TopNavBar) -->
+<header class="fixed top-0 left-[260px] right-0 h-[64px] bg-surface border-b border-border-hairline flex items-center justify-between px-margin-page z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/50">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-border-hairline rounded-lg focus:ring-1 focus:ring-primary-container focus:outline-none font-body-sm" placeholder="Search RFQs, shipments, or agents..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">apps</span>
+</div>
+<div class="flex items-center gap-3 pl-6 border-l border-border-hairline">
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-on-surface">M. Manager</p>
+<p class="text-[10px] text-on-surface-variant opacity-70">Senior Logistics Op</p>
+</div>
+<img class="w-8 h-8 rounded-full border border-border-hairline object-cover" data-alt="A professional headshot of a middle-aged logistics manager in a modern office environment. The lighting is soft and natural, emphasizing a trustworthy and efficient persona. The background is slightly blurred, showing a clean, high-tech workspace with subtle freight navigation charts. The overall style is corporate, clean, and premium." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwMzyq6vZWejN-wx0fFwjuvgDpdb9NHiaIp9UL9jUai5fK-v1H4pSQAaNPMwX3NxanZLelFn3R9vo_6YO93GVkT6xSzYgtTc2Ymyo3qtkuFX20pGwsnw9AXohHIQei4zBRRSC0c9vANVe54IFAsHvodmLcnKkqQHHOUWHBsH1QKweSRfMMMz0Bg5oHmvJWQKuyOttw-PVyRr6YH9rMBn0l_oKpnwYbXDRama-Rb1qWlUA4vYlmBmTSvZOlkJRc2lfcvbUgVy4MqvI"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] mt-[64px] h-[calc(100vh-64px)] overflow-y-auto custom-scrollbar p-margin-page bg-background">
+<!-- Header Section with Progress Summary Bar -->
+<section class="mb-gutter">
+<div class="flex items-baseline justify-between mb-6">
+<div>
+<nav class="flex items-center gap-2 text-on-surface-variant mb-1 font-label-caps text-label-caps">
+<a class="hover:text-primary" href="#">RFQs</a>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<a class="hover:text-primary" href="#">RFQ-2026-0715-AX</a>
+</nav>
+<h2 class="font-display-lg text-display-lg text-ink-text">Quote Collection Round</h2>
+</div>
+<!-- Deadline Timer -->
+<div class="bg-tertiary-fixed text-on-tertiary-fixed p-4 rounded-xl border border-tertiary-container/20 flex items-center gap-4 shadow-sm">
+<div class="flex flex-col">
+<span class="font-label-caps text-[10px] opacity-70 uppercase">Deadline Remaining</span>
+<span class="font-data-mono text-title-sm" id="countdown-timer">02:14:55:12</span>
+</div>
+<span class="material-symbols-outlined text-tertiary text-3xl" style="font-variation-settings: 'FILL' 1;">timer</span>
+</div>
+</div>
+<!-- Summary Progress Bar (Bento-style Card) -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-hairline flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<div class="flex gap-8">
+<div>
+<p class="font-label-caps text-label-caps text-muted-text">Round Status</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-title-sm text-ink-text">Collection Active</span>
+</div>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-muted-text">Participation</p>
+<p class="font-title-sm text-ink-text"><span class="font-data-mono">3</span> of <span class="font-data-mono">5</span> responded</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-muted-text">Comparability</p>
+<p class="font-title-sm text-primary"><span class="font-data-mono">2</span> comparable quotes</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-muted-text">Round ID</p>
+<p class="font-data-mono text-body-sm">Q-RD-552-26</p>
+</div>
+</div>
+<!-- Progress Indicator -->
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden flex">
+<div class="h-full bg-primary-container" style="width: 60%;"></div>
+<div class="h-full bg-tertiary-container opacity-50" style="width: 20%;"></div>
+<div class="h-full bg-surface-variant" style="width: 20%;"></div>
+</div>
+<div class="flex justify-between font-label-caps text-[10px] text-muted-text">
+<span>Quotes Received (60%)</span>
+<span>Pending (20%)</span>
+<span>Late (20%)</span>
+</div>
+</div>
+</section>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Agent Response Table (Priority Component) -->
+<div class="col-span-12 lg:col-span-9 bg-surface-container-lowest rounded-xl border border-border-hairline overflow-hidden">
+<div class="px-6 py-4 border-b border-border-hairline bg-surface-container-low flex justify-between items-center">
+<h3 class="font-title-sm text-ink-text">Agent Responses</h3>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1 font-label-caps text-label-caps text-muted-text hover:text-primary p-2">
+<span class="material-symbols-outlined text-sm">filter_list</span> Filter
+                        </button>
+<button class="flex items-center gap-1 font-label-caps text-label-caps text-muted-text hover:text-primary p-2">
+<span class="material-symbols-outlined text-sm">download</span> Export
+                        </button>
+</div>
+</div>
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-bright border-b border-border-hairline">
+<tr>
+<th class="px-6 py-3 font-label-caps text-label-caps text-on-surface-variant">Agent Name</th>
+<th class="px-6 py-3 font-label-caps text-label-caps text-on-surface-variant">Status</th>
+<th class="px-6 py-3 font-label-caps text-label-caps text-on-surface-variant">Total Rate (USD)</th>
+<th class="px-6 py-3 font-label-caps text-label-caps text-on-surface-variant">Transit Time</th>
+<th class="px-6 py-3 font-label-caps text-label-caps text-on-surface-variant">Last Active</th>
+<th class="px-6 py-3"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-hairline">
+<!-- Andes Link Freight -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container/10 flex items-center justify-center text-primary-container font-bold text-xs">AL</div>
+<div>
+<p class="font-body-md font-medium text-ink-text">Andes Link Freight</p>
+<p class="text-[10px] text-muted-text">ID: AG-4402</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-primary-container/10 text-on-primary-container text-[11px] font-bold rounded uppercase tracking-wider">Rate received</span>
+</td>
+<td class="px-6 py-4 font-data-mono text-ink-text font-bold">$12,450.00</td>
+<td class="px-6 py-4 font-data-mono text-muted-text">24 Days</td>
+<td class="px-6 py-4 text-body-sm text-muted-text">10 mins ago</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary-container hover:underline font-label-caps text-label-caps">View Details</button>
+</td>
+</tr>
+<!-- Pacific Forwarding Co -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-container/10 flex items-center justify-center text-tertiary-container font-bold text-xs">PF</div>
+<div>
+<p class="font-body-md font-medium text-ink-text">Pacific Forwarding Co</p>
+<p class="text-[10px] text-muted-text">ID: AG-2109</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-tertiary-fixed/50 text-on-tertiary-fixed-variant text-[11px] font-bold rounded uppercase tracking-wider">Incomplete rate</span>
+</td>
+<td class="px-6 py-4 font-data-mono text-tertiary font-bold">$11,800.00*</td>
+<td class="px-6 py-4 font-data-mono text-muted-text">--</td>
+<td class="px-6 py-4 text-body-sm text-muted-text">2 hrs ago</td>
+<td class="px-6 py-4 text-right">
+<button class="text-tertiary-container hover:underline font-label-caps text-label-caps">Flag Inquiry</button>
+</td>
+</tr>
+<!-- Sur Cargo Lines -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-variant flex items-center justify-center text-on-surface-variant font-bold text-xs">SC</div>
+<div>
+<p class="font-body-md font-medium text-ink-text">Sur Cargo Lines</p>
+<p class="text-[10px] text-muted-text">ID: AG-8831</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-surface-container-high text-on-surface-variant text-[11px] font-bold rounded uppercase tracking-wider">Awaiting response</span>
+</td>
+<td class="px-6 py-4 font-data-mono text-on-surface-variant opacity-40">TBD</td>
+<td class="px-6 py-4 font-data-mono text-muted-text">--</td>
+<td class="px-6 py-4 text-body-sm text-muted-text">1 day ago</td>
+<td class="px-6 py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary font-label-caps text-label-caps">Nudge</button>
+</td>
+</tr>
+<!-- Atacama Shipping -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-error-container/20 flex items-center justify-center text-error font-bold text-xs">AS</div>
+<div>
+<p class="font-body-md font-medium text-ink-text">Atacama Shipping</p>
+<p class="text-[10px] text-muted-text">ID: AG-5512</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-tertiary-fixed/30 text-on-tertiary-fixed-variant text-[11px] font-bold rounded uppercase tracking-wider">Late response</span>
+</td>
+<td class="px-6 py-4 font-data-mono text-ink-text">$13,100.00</td>
+<td class="px-6 py-4 font-data-mono text-muted-text">28 Days</td>
+<td class="px-6 py-4 text-body-sm text-muted-text">Overdue</td>
+<td class="px-6 py-4 text-right">
+<button class="text-error hover:underline font-label-caps text-label-caps">Disqualify</button>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="p-4 bg-surface-container-low/50 border-t border-border-hairline">
+<p class="text-[11px] text-muted-text italic">Showing 4 of 5 active agents assigned to this RFQ loop.</p>
+</div>
+</div>
+<!-- Side Intelligence Panel (Bento Grid Style) -->
+<div class="col-span-12 lg:col-span-3 flex flex-col gap-gutter">
+<!-- AI Insights Card -->
+<div class="bg-surface-navy text-on-primary p-6 rounded-xl ai-border-left relative overflow-hidden group">
+<!-- Subtle background decoration -->
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary-container/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-4">
+<span class="px-1.5 py-0.5 bg-primary-container text-[10px] font-data-mono rounded text-on-primary-container">AI</span>
+<h4 class="font-label-caps text-label-caps uppercase tracking-wider text-primary-fixed">Market Insight</h4>
+</div>
+<p class="text-body-sm leading-relaxed mb-4">
+                            Andes Link's rate is <span class="text-primary-fixed font-bold">4.2% below</span> the current Shanghai-Santos 30-day moving average.
+                        </p>
+<div class="bg-white/5 p-3 rounded-lg border border-white/10">
+<p class="text-[11px] text-on-primary-fixed-variant mb-2">Predicted completion time:</p>
+<div class="flex justify-between items-end">
+<span class="font-data-mono text-title-sm text-on-primary">14h 22m</span>
+<span class="text-[10px] opacity-60">98% Confidence</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Shipment Visualization Map Placeholder -->
+<div class="bg-surface-container-lowest rounded-xl border border-border-hairline overflow-hidden h-48 relative">
+<div class="absolute inset-0 grayscale opacity-40 hover:grayscale-0 transition-all duration-500" data-alt="A sophisticated digital map visualization of global trade routes. Neon lines connect Shanghai to the port of Santos in Brazil, traversing the Pacific Ocean. The map uses a dark, minimalist aesthetic with teal and navy blue color tones, matching the FreightPilot premium B2B UI. Data points and tracking nodes glow subtly along the route." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC7Gqg3dSGNFY0pj9zyDVDcZzLp0Us5V9J-S4e6One_F0oQm8m8uF2SPVU8KH8Y2k8Yi-m5C7p72oJWCX8EZPXO_kQWQulnlrqeA44sdKKm9NeGt2Q0S7FMsg47vDdaJ3XsDqv2sdUf0SSwRef10uEI1ucJ8xnyZhTrcXtxUDnxekoLZ5sWg6VPnflc7hNaxxPnrX3tQ7TqUaWpMVwZQhbfJrSMx0kYpyGABDWGQKng2lqqquliyEOKb5AaSlx2jwDTX4TX1ySJ9qM')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-navy/40 to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<span class="font-label-caps text-[10px] text-white uppercase tracking-widest bg-surface-navy/80 px-2 py-1 rounded">Route Map</span>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-hairline">
+<h4 class="font-label-caps text-label-caps text-ink-text mb-4 uppercase">Next Actions</h4>
+<ul class="space-y-3">
+<li>
+<button class="w-full flex items-center justify-between p-3 rounded-lg border border-border-hairline hover:border-primary-container hover:bg-primary-container/5 transition-all text-left group">
+<span class="text-body-sm text-muted-text group-hover:text-ink-text">Consolidate Quotes</span>
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between p-3 rounded-lg border border-border-hairline hover:border-primary-container hover:bg-primary-container/5 transition-all text-left group">
+<span class="text-body-sm text-muted-text group-hover:text-ink-text">Message All Agents</span>
+<span class="material-symbols-outlined text-sm">chat</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between p-3 rounded-lg border border-border-hairline hover:border-primary-container hover:bg-primary-container/5 transition-all text-left group">
+<span class="text-body-sm text-muted-text group-hover:text-ink-text">Extend Deadline</span>
+<span class="material-symbols-outlined text-sm">event_repeat</span>
+</button>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual Floating Action Button -->
+<button class="fixed bottom-8 right-8 bg-primary-container text-on-primary shadow-lg shadow-primary-container/20 w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-transform z-50">
+<span class="material-symbols-outlined">bolt</span>
+</button>
+<script>
+        // Simple countdown timer simulation
+        const countdownElement = document.getElementById('countdown-timer');
+        let days = 2;
+        let hours = 14;
+        let minutes = 55;
+        let seconds = 12;
+
+        setInterval(() => {
+            seconds--;
+            if (seconds < 0) {
+                seconds = 59;
+                minutes--;
+                if (minutes < 0) {
+                    minutes = 59;
+                    hours--;
+                    if (hours < 0) {
+                        hours = 23;
+                        days--;
+                    }
+                }
+            }
+            
+            const d = days.toString().padStart(2, '0');
+            const h = hours.toString().padStart(2, '0');
+            const m = minutes.toString().padStart(2, '0');
+            const s = seconds.toString().padStart(2, '0');
+            
+            countdownElement.textContent = `${d}:${h}:${m}:${s}`;
+        }, 1000);
+
+        // Subtle row highlight interaction
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // Potential detail view logic
+            });
+        });
+    </script>
+</body></html>

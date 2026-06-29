@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FreightPilot - New RFQ Intake</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#dce3e8",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#005048",
+                        "inverse-on-surface": "#ebf2f7",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#52dbca",
+                        "ink-text": "#1B2A3A",
+                        "surface-container-high": "#e2e9ee",
+                        "on-tertiary-fixed-variant": "#683d00",
+                        "on-primary-fixed": "#00201c",
+                        "on-surface": "#161d20",
+                        "tertiary-fixed": "#ffdcbc",
+                        "outline-variant": "#bbcac6",
+                        "secondary": "#4b607a",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#d2e4ff",
+                        "surface-container-low": "#eef5fa",
+                        "inverse-primary": "#52dbca",
+                        "secondary-fixed-dim": "#b3c8e6",
+                        "surface-container": "#e8eff4",
+                        "border-hairline": "#E3E9EF",
+                        "secondary-container": "#c9dffd",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#2a3135",
+                        "on-tertiary-fixed": "#2c1700",
+                        "primary-fixed": "#72f8e6",
+                        "surface-navy": "#0B2239",
+                        "surface-bright": "#f4faff",
+                        "tertiary": "#895100",
+                        "tertiary-fixed-dim": "#ffb86b",
+                        "primary-container": "#12b5a5",
+                        "on-secondary-fixed": "#051d33",
+                        "surface-container-lowest": "#ffffff",
+                        "ai-marker": "#12B5A5",
+                        "on-primary-container": "#00403a",
+                        "on-background": "#161d20",
+                        "primary": "#006a60",
+                        "surface": "#f4faff",
+                        "surface-tint": "#006a60",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#d4dbe0",
+                        "on-secondary-fixed-variant": "#344861",
+                        "outline": "#6c7a77",
+                        "on-secondary-container": "#4e627c",
+                        "on-surface-variant": "#3c4947",
+                        "tertiary-container": "#df902e",
+                        "muted-text": "#5C6B7A",
+                        "surface-container-highest": "#dce3e8",
+                        "background": "#f4faff",
+                        "on-tertiary-container": "#533000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "1rem",
+                        "stack-default": "1rem",
+                        "margin-page": "2rem",
+                        "topbar-height": "64px",
+                        "stack-compact": "0.5rem",
+                        "sidebar-width": "260px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "data-mono": ["JetBrains Mono"],
+                        "display-lg": ["Inter"],
+                        "title-sm": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "data-mono": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #EAF1F6;
+        }
+        .sidebar-active {
+            box-shadow: inset 4px 0 0 0 #72f8e6;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-background min-h-screen overflow-x-hidden">
+<!-- Sidebar Navigation -->
+<aside class="fixed h-screen w-sidebar-width left-0 top-0 bg-surface-navy text-on-primary-fixed flex flex-col py-6 z-50">
+<div class="px-6 mb-10">
+<h1 class="font-title-sm text-title-sm font-bold text-on-primary uppercase tracking-wider">FreightPilot</h1>
+<p class="text-[10px] text-on-primary-fixed-variant opacity-60 font-label-caps mt-1">Premium B2B Quote Desk</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center text-primary-fixed font-bold border-l-4 border-primary-fixed pl-4 py-3 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">inbox</span>
+<span class="font-body-md text-body-md">RFQ Inbox</span>
+</a>
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 pl-5 py-3 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">request_quote</span>
+<span class="font-body-md text-body-md">Active Quotes</span>
+</a>
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 pl-5 py-3 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">fact_check</span>
+<span class="font-body-md text-body-md">Approvals</span>
+</a>
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 pl-5 py-3 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">hub</span>
+<span class="font-body-md text-body-md">Agent Network</span>
+</a>
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 pl-5 py-3 hover:bg-primary-container/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">settings_input_component</span>
+<span class="font-body-md text-body-md">Integrations</span>
+</a>
+</nav>
+<div class="px-5 mt-auto space-y-4">
+<button class="w-full bg-primary-container text-on-primary-container font-bold py-3 rounded-lg flex items-center justify-center gap-2 active:scale-95 duration-150 shadow-lg">
+<span class="material-symbols-outlined">add</span>
+                New Quote
+            </button>
+<div class="pt-6 border-t border-white/10 space-y-2">
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">help</span>
+<span class="font-body-md text-body-md">Help Center</span>
+</a>
+<a class="flex items-center text-on-primary-fixed-variant opacity-70 hover:opacity-100 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Shell -->
+<div class="ml-sidebar-width min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="h-topbar-height bg-surface border-b border-border-hairline flex justify-between items-center px-margin-page sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors active:opacity-80">
+<span class="material-symbols-outlined text-secondary">arrow_back</span>
+</button>
+<h2 class="font-headline-md text-headline-md text-surface-navy">New RFQ Intake</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors cursor-pointer">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-pointer">apps</span>
+<div class="flex items-center gap-3 border-l border-border-hairline pl-6">
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-surface-navy">Logistics Manager</p>
+<p class="text-[10px] text-muted-text">Synthetic demo data</p>
+</div>
+<img class="w-10 h-10 rounded-full object-cover border border-border-hairline" data-alt="Close-up professional headshot of a freight logistics manager in a bright corporate office setting. The person is smiling confidently, wearing professional attire. High-quality commercial photography style, soft natural lighting from a large window, clean and professional atmosphere consistent with a B2B SaaS platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfmyl3Aek7o6zZMc-g1vXqk20OrMMzua_oqJ8GXQYBpJmJRo2oImZ2FM089_cpXIepX3rQ0QUWxS-O06ADp6riNXMXLxUTfwOMA_e1nCz7LK1e2cDN3uZeiiJ6pqMSdoP1GVuPn7EJOJXRKOH-0PSpgkBdHDalgPA01PdVH13tGBZqYdpD9C493Z-EWpJ9LlI15nClhCSRI6FPTs7CaV7DlP9ReKeKDEI43xIk6MpUXmfGhKAZLQO-7Crsi7llGVyT6xZSITApxrg"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<main class="flex-1 p-margin-page">
+<!-- Contextual Breadcrumb & Title -->
+<div class="mb-10 max-w-6xl mx-auto">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-ai-marker font-data-mono uppercase tracking-tighter text-[10px] border border-ai-marker px-1.5 py-0.5 rounded">AI Assisted Workflow</span>
+<div class="h-[1px] flex-1 bg-border-hairline"></div>
+</div>
+<h3 class="font-display-lg text-display-lg text-surface-navy mb-2">Choose an intake method</h3>
+<p class="text-muted-text font-body-md max-w-2xl">FreightPilot uses advanced AI to parse logistics requirements from any source. Select how you would like to initiate this new Quote Request.</p>
+</div>
+<!-- Intake Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter max-w-6xl mx-auto items-stretch">
+<!-- Option 1: Import Email -->
+<div class="group bg-surface-container-lowest border border-border-hairline p-8 flex flex-col items-center text-center transition-all duration-300 hover:border-primary-container hover:shadow-xl hover:shadow-primary-container/5 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-surface-navy/10 group-hover:bg-primary-container transition-colors"></div>
+<div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mb-6 group-hover:bg-primary-container/10 transition-colors">
+<span class="material-symbols-outlined text-4xl text-surface-navy group-hover:text-primary transition-colors">mail</span>
+</div>
+<h4 class="font-title-sm text-title-sm font-bold text-surface-navy mb-3">Import email</h4>
+<p class="text-muted-text font-body-sm mb-10 flex-1">Forward client RFQ emails directly to your workspace or connect your Outlook/Gmail inbox for automated extraction.</p>
+<button class="w-full bg-primary-container text-on-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all active:scale-95 group-hover:ring-2 group-hover:ring-primary-container group-hover:ring-offset-2">
+<span>Select</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+<!-- Option 2: Paste Conversation -->
+<div class="group bg-surface-container-lowest border border-border-hairline p-8 flex flex-col items-center text-center transition-all duration-300 hover:border-primary-container hover:shadow-xl hover:shadow-primary-container/5 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-surface-navy/10 group-hover:bg-primary-container transition-colors"></div>
+<div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mb-6 group-hover:bg-primary-container/10 transition-colors">
+<span class="material-symbols-outlined text-4xl text-surface-navy group-hover:text-primary transition-colors">chat_bubble</span>
+</div>
+<h4 class="font-title-sm text-title-sm font-bold text-surface-navy mb-3">Paste conversation</h4>
+<p class="text-muted-text font-body-sm mb-10 flex-1">Copy and paste unstructured text from WhatsApp, WeChat, or Teams chats. Our AI will structure routes, weight, and dates.</p>
+<button class="w-full bg-primary-container text-on-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all active:scale-95 group-hover:ring-2 group-hover:ring-primary-container group-hover:ring-offset-2">
+<span>Select</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+<!-- Option 3: Quick Capture -->
+<div class="group bg-surface-container-lowest border border-border-hairline p-8 flex flex-col items-center text-center transition-all duration-300 hover:border-primary-container hover:shadow-xl hover:shadow-primary-container/5 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-surface-navy/10 group-hover:bg-primary-container transition-colors"></div>
+<div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mb-6 group-hover:bg-primary-container/10 transition-colors">
+<span class="material-symbols-outlined text-4xl text-surface-navy group-hover:text-primary transition-colors">edit_note</span>
+</div>
+<h4 class="font-title-sm text-title-sm font-bold text-surface-navy mb-3">Quick capture (call notes)</h4>
+<p class="text-muted-text font-body-sm mb-10 flex-1">Type in shorthand notes from a phone call. We'll fill in the technical details and search for historical shipment matches.</p>
+<button class="w-full bg-primary-container text-on-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all active:scale-95 group-hover:ring-2 group-hover:ring-primary-container group-hover:ring-offset-2">
+<span>Select</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Recent Activity / Guidance Section -->
+<div class="mt-20 max-w-6xl mx-auto">
+<div class="flex items-center justify-between mb-6">
+<h5 class="font-title-sm text-title-sm text-surface-navy font-bold">Recent Intake History</h5>
+<a class="text-primary font-label-caps text-label-caps hover:underline" href="#">View All Activity</a>
+</div>
+<div class="bg-white border border-border-hairline overflow-hidden">
+<table class="w-full text-left font-body-md">
+<thead class="bg-surface-container-low border-b border-border-hairline">
+<tr>
+<th class="px-6 py-3 font-label-caps text-label-caps text-muted-text">Source Type</th>
+<th class="px-6 py-3 font-label-caps text-label-caps text-muted-text">Customer</th>
+<th class="px-6 py-3 font-label-caps text-label-caps text-muted-text">Processed At</th>
+<th class="px-6 py-3 font-label-caps text-label-caps text-muted-text">Status</th>
+<th class="px-6 py-3 font-label-caps text-label-caps text-muted-text text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-hairline">
+<tr class="hover:bg-surface-navy/[0.02] transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-muted-text text-lg">mail</span>
+<span>Email Forward</span>
+</div>
+</td>
+<td class="px-6 py-4 font-medium text-surface-navy">Atlas Globex Corp</td>
+<td class="px-6 py-4 text-muted-text">14 mins ago</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-primary-container/10 text-on-primary-container text-[11px] font-bold rounded flex items-center w-fit gap-1">
+<span class="w-1.5 h-1.5 bg-primary-container rounded-full"></span>
+                                        AI PARSED
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">Resume Quote</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-navy/[0.02] transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-muted-text text-lg">chat_bubble</span>
+<span>WhatsApp Paste</span>
+</div>
+</td>
+<td class="px-6 py-4 font-medium text-surface-navy">Direct Freight Ltd</td>
+<td class="px-6 py-4 text-muted-text">2 hours ago</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-tertiary-container/10 text-on-tertiary-container text-[11px] font-bold rounded flex items-center w-fit gap-1">
+<span class="w-1.5 h-1.5 bg-tertiary-container rounded-full"></span>
+                                        PENDING REVIEW
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">Resume Quote</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Bottom Floating Action Instruction -->
+<div class="fixed bottom-8 right-8 flex items-center gap-4 bg-surface-navy text-on-primary p-4 rounded-full shadow-2xl border border-white/10 max-w-sm">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div>
+<p class="text-xs font-bold uppercase tracking-widest text-primary-fixed">AI Quick Tip</p>
+<p class="text-[11px] text-on-primary/80 leading-tight">Drag and drop any PDF manifest or XLSX sheet here to auto-initiate a bulk quote intake.</p>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        document.querySelectorAll('.group button').forEach(button => {
+            button.addEventListener('mousedown', function() {
+                this.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', function() {
+                this.classList.remove('scale-95');
+            });
+        });
+
+        // Simple animation on scroll for cards
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.grid > div').forEach(card => {
+            card.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-500', 'ease-out');
+            observer.observe(card);
+        });
+    </script>
+</body></html>

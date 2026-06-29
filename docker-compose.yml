@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: freightpilot-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: freightpilot
+      POSTGRES_PASSWORD: freightpilot
+      POSTGRES_DB: freightpilot
+    ports:
+      - "5432:5432"
+    volumes:
+      - freightpilot-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U freightpilot -d freightpilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: freightpilot-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://freightpilot:freightpilot@postgres:5432/freightpilot
+      AI_PROVIDER: fixture
+      DEMO_TENANT_ID: demo_freightpilot
+      DEMO_MODE: guided
+    ports:
+      - "3000:3000"
+
+volumes:
+  freightpilot-postgres:

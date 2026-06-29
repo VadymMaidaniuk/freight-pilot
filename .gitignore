@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+coverage
+test-results
+playwright-report
+.env
+.env.local
+.env*.local
+!.env.example
+*.tsbuildinfo
+fixtures/synthetic-rate-sheets/*.xlsx
