@@ -24,7 +24,7 @@ export function LiveProofClient() {
     const payload = await response.json();
 
     if (!response.ok || !payload.ok) {
-      setResult({ state: "error", message: payload.message ?? "Live Proof request failed." });
+      setResult({ state: "error", message: payload.message ?? "Запрос проверки AI завершился ошибкой." });
       return;
     }
 
@@ -39,43 +39,43 @@ export function LiveProofClient() {
   return (
     <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
       <Panel>
-        <PanelHeader title="Live Proof Input" eyebrow="Experimental extraction" />
+        <PanelHeader title="Входные данные проверки" eyebrow="Экспериментальное извлечение" />
         <PanelBody>
           <form action={submit} className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="block text-sm font-semibold text-ink-text">
-                Mode
+                Режим
                 <select name="mode" className="mt-1 h-10 w-full rounded-md border border-border-hairline bg-white px-3 text-sm outline-none focus:border-primary-container">
-                  <option value="rfq">RFQ extraction</option>
-                  <option value="rate">Rate normalization</option>
+                  <option value="rfq">Извлечение RFQ</option>
+                  <option value="rate">Нормализация ставки</option>
                 </select>
               </label>
               <label className="block text-sm font-semibold text-ink-text">
-                Source
+                Источник
                 <select name="sourceType" className="mt-1 h-10 w-full rounded-md border border-border-hairline bg-white px-3 text-sm outline-none focus:border-primary-container">
-                  <option value="email">Pasted email</option>
-                  <option value="conversation">Pasted chat</option>
-                  <option value="call_notes">Call notes</option>
-                  <option value="messy_text">Messy rate reply</option>
-                  <option value="xlsx">Controlled XLSX text</option>
+                  <option value="email">Вставленное письмо</option>
+                  <option value="conversation">Вставленный чат</option>
+                  <option value="call_notes">Заметки звонка</option>
+                  <option value="messy_text">Неструктурированный ответ по ставке</option>
+                  <option value="xlsx">Контролируемый XLSX-текст</option>
                 </select>
               </label>
             </div>
             <label className="block text-sm font-semibold text-ink-text">
-              Input text
+              Входной текст
               <textarea
                 name="rawText"
                 rows={12}
                 className="mt-1 w-full resize-y rounded-md border border-border-hairline bg-white p-3 text-sm leading-6 outline-none focus:border-primary-container"
-                defaultValue={"Please quote 2 x 40HC from Valparaiso, Chile to Gdansk, Poland. Cargo is green coffee beans, FOB. Cargo expected next week."}
+                defaultValue={"Прошу дать ставку на 2 x 40HC из Valparaiso, Chile в Gdansk, Poland. Груз - зеленые кофейные зерна, FOB. Груз будет готов на следующей неделе."}
               />
             </label>
             <div className="rounded-md border border-secondary-container bg-secondary-container/30 p-3 text-sm leading-6 text-on-secondary-container">
-              Configured local provider: <span className="font-mono">google/gemma-4-12b-qat</span> via LM Studio endpoint from environment.
+              Настроенный локальный провайдер: <span className="font-mono">google/gemma-4-12b-qat</span> через LM Studio endpoint из окружения.
             </div>
             <Button type="submit" disabled={result.state === "loading"}>
               {result.state === "loading" ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Bot className="h-4 w-4" aria-hidden />}
-              Run Live Proof
+              Запустить проверку
             </Button>
           </form>
         </PanelBody>
@@ -83,11 +83,11 @@ export function LiveProofClient() {
 
       <Panel>
         <PanelHeader
-          title="Validated Output"
-          eyebrow="Zod-checked"
+          title="Проверенный результат"
+          eyebrow="Проверка через Zod"
           actions={
             result.state === "done" ? (
-              <Badge tone={result.fallback ? "amber" : "teal"}>{result.fallback ? "Fallback used" : "Live validated"}</Badge>
+              <Badge tone={result.fallback ? "amber" : "teal"}>{result.fallback ? "Использован резерв" : "Оперативный ответ валиден"}</Badge>
             ) : null
           }
         />
@@ -96,12 +96,12 @@ export function LiveProofClient() {
             <div className="flex min-h-[280px] items-center justify-center rounded-md border border-dashed border-border-hairline text-center text-sm text-muted-text">
               <div>
                 <Upload className="mx-auto mb-3 h-7 w-7 text-primary" aria-hidden />
-                Paste controlled synthetic input and run extraction.
+                Вставьте контролируемый синтетический текст и запустите извлечение.
               </div>
             </div>
           ) : null}
 
-          {result.state === "loading" ? <p className="text-sm text-muted-text">Waiting for LM Studio response...</p> : null}
+          {result.state === "loading" ? <p className="text-sm text-muted-text">Ожидаем ответ LM Studio...</p> : null}
           {result.state === "error" ? <p className="text-sm text-on-error-container">{result.message}</p> : null}
           {result.state === "done" ? (
             <div className="space-y-3">

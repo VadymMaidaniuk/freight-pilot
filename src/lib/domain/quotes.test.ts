@@ -3,15 +3,15 @@ import { casesSeed, initialRateOptionsSeed, southernGateLateRate } from "@/lib/d
 import { buildQuoteDraft, calculateLateRateImprovement } from "./quotes";
 import { canCreateQuote } from "./rates";
 
-describe("quote rules", () => {
-  it("prevents quote creation without required rate data", () => {
+describe("правила котировок", () => {
+  it("не дает создать котировку без обязательных данных ставки", () => {
     const incompleteRate = initialRateOptionsSeed.find((item) => item.id === "rate-cl-pacific")!;
     expect(canCreateQuote(incompleteRate)).toMatchObject({
       allowed: false
     });
   });
 
-  it("calculates final customer price in code", () => {
+  it("рассчитывает финальную цену для клиента в коде", () => {
     const rfqCase = casesSeed.find((item) => item.id === "case-cl-001")!;
     const rate = initialRateOptionsSeed.find((item) => item.id === "rate-cl-andes")!;
     const version = buildQuoteDraft({
@@ -25,7 +25,7 @@ describe("quote rules", () => {
     expect(version.finalCustomerPrice).toBe(5070);
   });
 
-  it("late rate does not modify Quote v1 automatically", () => {
+  it("поздняя ставка не меняет Quote v1 автоматически", () => {
     const rfqCase = casesSeed.find((item) => item.id === "case-cl-001")!;
     const firstRate = initialRateOptionsSeed.find((item) => item.id === "rate-cl-andes")!;
     const quoteV1 = buildQuoteDraft({

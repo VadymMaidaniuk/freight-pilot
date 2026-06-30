@@ -27,7 +27,7 @@ export function resolveLatestCustomerAssertion(assertions: ChatAssertion[], fiel
       value: null,
       verificationStatus: "Missing",
       confidence: "Low",
-      evidence: "No explicit customer value found."
+      evidence: "Явное значение от клиента не найдено."
     };
   }
 
@@ -40,7 +40,7 @@ export function resolveLatestCustomerAssertion(assertions: ChatAssertion[], fiel
       value: null,
       verificationStatus: "Missing",
       confidence: "Low",
-      evidence: "No explicit customer value found."
+      evidence: "Явное значение от клиента не найдено."
     };
   }
 
@@ -55,7 +55,7 @@ export function resolveLatestCustomerAssertion(assertions: ChatAssertion[], fiel
   }
 
   const latestText = latest.text.toLowerCase();
-  const hasRevisionCue = ["revise", "change", "instead", "update", "now"].some((cue) => latestText.includes(cue));
+  const hasRevisionCue = ["revise", "change", "instead", "update", "now", "измен", "замен", "обнов", "теперь"].some((cue) => latestText.includes(cue));
 
   if (hasRevisionCue) {
     return {

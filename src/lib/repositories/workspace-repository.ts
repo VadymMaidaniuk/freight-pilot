@@ -26,6 +26,7 @@ import { demoSeed, southernGateLateRate, southernGateLateReply } from "@/lib/dem
 import { canSendAgentRFQ, evaluateManualReview } from "@/lib/domain/field-rules";
 import { buildQuoteDraft } from "@/lib/domain/quotes";
 import { heuristicExtractRFQ } from "@/lib/domain/rfq-heuristics";
+import { caseStatusLabel } from "@/lib/labels";
 import type {
   Agent,
   AgentCoverage,
@@ -79,19 +80,19 @@ function buildDynamicCaseRecords(input: {
   const now = new Date();
   const requestNumber = `RFQ-LIVE-${idSuffix.toUpperCase()}`;
   const fields = input.extraction.fields;
-  const routeLabel = `${fields.originPort ?? fields.originCity ?? "Origin pending"} -> ${fields.destinationPort ?? fields.destinationCity ?? "Destination pending"}`;
+  const routeLabel = `${fields.originPort ?? fields.originCity ?? "Отправление не указано"} -> ${fields.destinationPort ?? fields.destinationCity ?? "Назначение не указано"}`;
   const serviceScope =
     fields.originPort && fields.destinationPort && fields.containerType && fields.containerQuantity
-      ? "Origin handling and ocean FCL"
+      ? "Обработка в порту отправления и морской FCL"
       : null;
 
   const scenario: RFQScenario = {
     id: scenarioId,
     tenantId,
     scenarioKey: `LIVE-${idSuffix.toUpperCase()}`,
-    title: `Live RFQ · ${routeLabel}`,
+    title: `Живой RFQ · ${routeLabel}`,
     routeLabel,
-    purpose: ["Live pasted input", "LLM extraction", "Database agent matching", "Simulated RFQ round"],
+    purpose: ["Живой вставленный текст", "LLM-извлечение", "Подбор агентов из базы", "Имитация RFQ-раунда"],
     initialStatus: "draft"
   };
 
@@ -127,8 +128,8 @@ function buildDynamicCaseRecords(input: {
     serviceScope,
     cargoReadyInfo: fields.cargoReadyDate ? fields.cargoReadyDate : null,
     cargoReadyDate: fields.cargoReadyDate,
-    quotationDeadline: fields.quotationDeadline ?? "Pending",
-    responseCutoff: "Demo cutoff +45 min",
+    quotationDeadline: fields.quotationDeadline ?? "Ожидает уточнения",
+    responseCutoff: "Демо-отсечка +45 мин",
     specialRequirements: fields.specialRequirements,
     cargoFlags: fields.cargoFlags,
     riskFlags: input.extraction.riskFlags,
@@ -139,7 +140,7 @@ function buildDynamicCaseRecords(input: {
 
   rfqCase.status = deriveInitialStatus(rfqCase);
   if (rfqCase.status === "manual_review") {
-    rfqCase.manualReviewReason = "This RFQ requires operational validation before agent requests can be sent.";
+    rfqCase.manualReviewReason = "Этот RFQ требует операционной проверки перед отправкой запросов агентам.";
   }
 
   const assertions: RFQFieldAssertion[] = input.extraction.assertions.map((assertion, index) => ({
@@ -160,8 +161,8 @@ function buildDynamicCaseRecords(input: {
       tenantId,
       caseId,
       eventType: "live_input_created",
-      title: "Live RFQ created",
-      body: "Pasted input was extracted, validated and stored as a normal RFQ case.",
+      title: "Живой RFQ создан",
+      body: "Вставленный текст извлечен, проверен и сохранен как обычный RFQ-кейс.",
       createdAt: now
     },
     {
@@ -169,11 +170,11 @@ function buildDynamicCaseRecords(input: {
       tenantId,
       caseId,
       eventType: "workflow_state",
-      title: `Initial state: ${rfqCase.status.replaceAll("_", " ")}`,
+      title: `Начальное состояние: ${caseStatusLabel(rfqCase.status)}`,
       body:
         rfqCase.status === "ready_for_routing"
-          ? "Required routing fields are present. Agent shortlist can be reviewed."
-          : "Some operational fields require clarification or manual validation before routing.",
+          ? "Обязательные поля для маршрутизации заполнены. Короткий список агентов можно проверять."
+          : "Часть операционных полей требует уточнения или ручной проверки перед маршрутизацией.",
       createdAt: now
     }
   ];
@@ -194,13 +195,13 @@ function buildSyntheticReply(input: { rfqCase: RFQCase; agent: Agent; index: num
 
   return {
     rawText: complete
-      ? `${input.agent.companyName} quote for ${route}: ${input.rfqCase.containerQuantity} x ${input.rfqCase.containerType}. Ocean freight USD ${oceanFreight}, origin charges USD ${originCharges}, documentation USD ${documentationFee}, destination charges USD ${destinationCharges}. Shipping line ${shippingLine}. Transit ${origin === "China" ? 34 + input.index * 3 : 39 + input.index * 3} days. Validity 2026-07-20. Free days ${14 - input.index * 2}.`
-      : `${input.agent.companyName} can support ${route}. Ocean side approx USD ${oceanFreight}, ${shippingLine}, transit to confirm, local charges and validity to follow.`,
+      ? `${input.agent.companyName}: ставка для ${route}, ${input.rfqCase.containerQuantity} x ${input.rfqCase.containerType}. Морской фрахт USD ${oceanFreight}, сборы отправления USD ${originCharges}, документация USD ${documentationFee}, сборы назначения USD ${destinationCharges}. Линия ${shippingLine}. Транзит ${origin === "China" ? 34 + input.index * 3 : 39 + input.index * 3} дн. Действует до 2026-07-20. Свободных дней: ${14 - input.index * 2}.`
+      : `${input.agent.companyName} может поддержать ${route}. Ocean side примерно USD ${oceanFreight}, ${shippingLine}, транзит нужно подтвердить, локальные сборы и срок действия будут позже.`,
     normalized: {
       agentName: input.agent.companyName,
       oceanFreight,
       currency: "USD",
-      rateUnit: `${input.rfqCase.containerQuantity ?? 1} x ${input.rfqCase.containerType ?? "container"}`,
+      rateUnit: `${input.rfqCase.containerQuantity ?? 1} x ${input.rfqCase.containerType ?? "контейнер"}`,
       originCharges: complete ? originCharges : 0,
       documentationFee: complete ? documentationFee : 0,
       destinationCharges: complete ? destinationCharges : 0,
@@ -209,12 +210,12 @@ function buildSyntheticReply(input: { rfqCase: RFQCase; agent: Agent; index: num
       route,
       validityDate: complete ? "2026-07-20" : "Missing",
       freeDays: complete ? 14 - input.index * 2 : 0,
-      inclusions: complete ? ["Ocean freight", "Origin charges", "Documentation", "Destination handling"] : ["Ocean freight indication"],
-      exclusions: complete ? ["Customs duties", "Demurrage after free days"] : ["Origin charges not disclosed", "Destination charges not disclosed", "Validity missing"],
-      conditions: complete ? ["Subject to equipment availability"] : ["Follow-up required before customer quote"],
+      inclusions: complete ? ["Морской фрахт", "Сборы в порту отправления", "Документация", "Обработка в порту назначения"] : ["Индикативный морской фрахт"],
+      exclusions: complete ? ["Таможенные пошлины", "Демередж после свободных дней"] : ["Сборы отправления не раскрыты", "Сборы назначения не раскрыты", "Срок действия отсутствует"],
+      conditions: complete ? ["При условии наличия оборудования"] : ["Нужен дополнительный запрос перед клиентской котировкой"],
       completenessScore: complete ? 94 - input.index * 4 : 48,
       reviewRequired: !complete,
-      sourceEvidence: complete ? "Simulated reply disclosed major charges, validity and free days." : "Simulated reply is missing local charges and validity."
+      sourceEvidence: complete ? "Имитированный ответ раскрыл основные сборы, срок действия и свободные дни." : "В имитированном ответе нет локальных сборов и срока действия."
     } satisfies RateExtraction
   };
 }
@@ -400,10 +401,10 @@ export async function resetWorkspace() {
 
 export async function createQuoteFromRate(caseId: string, rateOptionId: string, commercialAdjustment = 420) {
   const snapshot = await loadCaseSnapshot(caseId);
-  if (!snapshot) throw new Error("RFQ case not found");
+  if (!snapshot) throw new Error("RFQ-кейс не найден");
 
   const rate = snapshot.rateOptions.find((item) => item.id === rateOptionId);
-  if (!rate) throw new Error("Rate option not found");
+  if (!rate) throw new Error("Вариант ставки не найден");
 
   const existingQuote = snapshot.quotes[0];
   const quoteId = existingQuote?.id ?? `quote-${caseId}`;
@@ -427,7 +428,7 @@ export async function createQuoteFromRate(caseId: string, rateOptionId: string, 
         caseId,
         selectedRateOptionId: rateOptionId,
         currentVersion: versionNumber,
-        status: "Draft - commercial approval required"
+        status: "Черновик - требуется коммерческое согласование"
       });
     } else {
       existingQuote.currentVersion = versionNumber;
@@ -444,8 +445,8 @@ export async function createQuoteFromRate(caseId: string, rateOptionId: string, 
       tenantId,
       caseId,
       eventType: "quote_version",
-      title: `Quote v${versionNumber} created`,
-      body: `Manager selected ${rate.shippingLine} rate. Existing quote versions were not modified.`,
+      title: `Quote v${versionNumber} создана`,
+      body: `Менеджер выбрал ставку ${rate.shippingLine}. Существующие версии котировок не изменялись.`,
       createdAt: new Date()
     });
     touchWorkspace();
@@ -460,7 +461,7 @@ export async function createQuoteFromRate(caseId: string, rateOptionId: string, 
       caseId,
       selectedRateOptionId: rateOptionId,
       currentVersion: versionNumber,
-      status: "Draft - commercial approval required"
+      status: "Черновик - требуется коммерческое согласование"
     });
   } else {
     await db
@@ -479,8 +480,8 @@ export async function createQuoteFromRate(caseId: string, rateOptionId: string, 
     tenantId,
     caseId,
     eventType: "quote_version",
-    title: `Quote v${versionNumber} created`,
-    body: `Manager selected ${rate.shippingLine} rate. Existing quote versions were not modified.`,
+    title: `Quote v${versionNumber} создана`,
+    body: `Менеджер выбрал ставку ${rate.shippingLine}. Существующие версии котировок не изменялись.`,
     createdAt: new Date()
   });
 
@@ -501,8 +502,8 @@ export async function receiveLateExcelRate(caseId: string) {
         tenantId,
         caseId,
         eventType: "late_rate",
-        title: "Late Excel rate received",
-        body: "Southern Gate Forwarding returned a synthetic XLSX rate after Quote v1. Quote v1 was not modified.",
+        title: "Получена поздняя Excel-ставка",
+        body: "Southern Gate Forwarding вернул синтетическую XLSX-ставку после Quote v1. Quote v1 не изменялась.",
         createdAt: new Date()
       });
     }
@@ -522,8 +523,8 @@ export async function receiveLateExcelRate(caseId: string) {
     tenantId,
     caseId,
     eventType: "late_rate",
-    title: "Late Excel rate received",
-    body: "Southern Gate Forwarding returned a synthetic XLSX rate after Quote v1. Quote v1 was not modified.",
+    title: "Получена поздняя Excel-ставка",
+    body: "Southern Gate Forwarding вернул синтетическую XLSX-ставку после Quote v1. Quote v1 не изменялась.",
     createdAt: new Date()
   });
   touchWorkspace();
@@ -587,11 +588,11 @@ export async function createRFQFromPastedInput(input: { sourceType: string; rawT
 
 export async function processSimulatedAgentReplies(caseId: string) {
   const snapshot = await loadCaseSnapshot(caseId);
-  if (!snapshot) throw new Error("RFQ case not found");
+  if (!snapshot) throw new Error("RFQ-кейс не найден");
   if (snapshot.rateOptions.length > 0) return;
 
   const selectedRequests = snapshot.requests.slice(0, 3);
-  if (selectedRequests.length === 0) throw new Error("No simulated agent requests found");
+  if (selectedRequests.length === 0) throw new Error("Имитированные запросы агентам не найдены");
 
   const ai = (process.env.AI_PROVIDER ?? "fixture") === "fixture" ? null : createAIService();
   const replyRows: RateReply[] = [];
@@ -688,8 +689,8 @@ export async function processSimulatedAgentReplies(caseId: string) {
       tenantId,
       caseId,
       eventType: "rate_replies_processed",
-      title: "Simulated agent replies processed",
-      body: "Agent reply text was normalized, validated and converted into comparable rate options.",
+      title: "Имитированные ответы агентов обработаны",
+      body: "Текст ответов агентов нормализован, проверен и преобразован в сопоставимые варианты ставок.",
       createdAt: now
     });
     touchWorkspace();
@@ -713,8 +714,8 @@ export async function processSimulatedAgentReplies(caseId: string) {
     tenantId,
     caseId,
     eventType: "rate_replies_processed",
-    title: "Simulated agent replies processed",
-    body: "Agent reply text was normalized, validated and converted into comparable rate options.",
+    title: "Имитированные ответы агентов обработаны",
+    body: "Текст ответов агентов нормализован, проверен и преобразован в сопоставимые варианты ставок.",
     createdAt: now
   });
   touchWorkspace();
@@ -733,7 +734,7 @@ export async function approveForRouting(caseId: string, agentIds: string[]) {
       tenantId,
       caseId,
       status: "sent",
-      responseCutoff: "Demo cutoff +45 min",
+      responseCutoff: "Демо-отсечка +45 мин",
       selectedAgentIds: selected
     });
     store.requests.push(
@@ -754,8 +755,8 @@ export async function approveForRouting(caseId: string, agentIds: string[]) {
       tenantId,
       caseId,
       eventType: "rfq_sent",
-      title: "RFQ drafts sent to agents",
-      body: `Simulated sends created for ${selected.length} selected agents. No real external email was sent.`,
+      title: "Черновики RFQ отправлены агентам",
+      body: `Создана имитация отправки для ${selected.length} выбранных агентов. Реальные внешние письма не отправлялись.`,
       createdAt: new Date()
     });
     touchWorkspace();
@@ -768,7 +769,7 @@ export async function approveForRouting(caseId: string, agentIds: string[]) {
     tenantId,
     caseId,
     status: "sent",
-    responseCutoff: "Demo cutoff +45 min",
+    responseCutoff: "Демо-отсечка +45 мин",
     selectedAgentIds: selected
   });
   await db.insert(agentRequests).values(
@@ -788,8 +789,8 @@ export async function approveForRouting(caseId: string, agentIds: string[]) {
     tenantId,
     caseId,
     eventType: "rfq_sent",
-    title: "RFQ drafts sent to agents",
-    body: `Simulated sends created for ${selected.length} selected agents. No real external email was sent.`,
+    title: "Черновики RFQ отправлены агентам",
+    body: `Создана имитация отправки для ${selected.length} выбранных агентов. Реальные внешние письма не отправлялись.`,
     createdAt: new Date()
   });
   touchWorkspace();
@@ -805,8 +806,8 @@ export async function overrideManualReview(caseId: string) {
       tenantId,
       caseId,
       eventType: "manual_override",
-      title: "Manual review override recorded",
-      body: "Manager allowed routing to continue. Risk flags remain attached to the case.",
+      title: "Снятие ручной проверки зафиксировано",
+      body: "Менеджер разрешил продолжить маршрутизацию. Риск-флаги остаются привязанными к кейсу.",
       createdAt: new Date()
     });
     touchWorkspace();
@@ -820,8 +821,8 @@ export async function overrideManualReview(caseId: string) {
     tenantId,
     caseId,
     eventType: "manual_override",
-    title: "Manual review override recorded",
-    body: "Manager allowed routing to continue. Risk flags remain attached to the case.",
+    title: "Снятие ручной проверки зафиксировано",
+    body: "Менеджер разрешил продолжить маршрутизацию. Риск-флаги остаются привязанными к кейсу.",
     createdAt: new Date()
   });
   touchWorkspace();

@@ -7,11 +7,11 @@ export function calculateKnownTotal(input: Pick<RateOption, "oceanFreight" | "or
 export function canCreateQuote(rate: RateOption | undefined) {
   const blockers: string[] = [];
 
-  if (!rate) blockers.push("Selected rate");
-  if (rate && !rate.currency) blockers.push("Currency");
-  if (rate && rate.reviewRequired) blockers.push("Known or explicitly excluded major charges");
-  if (rate && rate.validityDate === "Missing") blockers.push("Validity");
-  if (rate && rate.knownTotal <= 0) blockers.push("Known total");
+  if (!rate) blockers.push("Выбранная ставка");
+  if (rate && !rate.currency) blockers.push("Валюта");
+  if (rate && rate.reviewRequired) blockers.push("Известные или явно исключенные основные сборы");
+  if (rate && rate.validityDate === "Missing") blockers.push("Срок действия");
+  if (rate && rate.knownTotal <= 0) blockers.push("Известная итоговая сумма");
 
   return {
     allowed: blockers.length === 0,
@@ -43,15 +43,15 @@ export function explainRecommendation(rate: RateOption, allRates: RateOption[]) 
   }, null);
 
   const reasons = [
-    lowestComparable?.id === rate.id ? "Lowest comparable known total" : "Competitive known total",
-    "Major charges disclosed",
-    `Validity covers ${rate.validityDate}`,
-    `${rate.freeDays} free days included`,
-    `${rate.transitDays} day transit time`
+    lowestComparable?.id === rate.id ? "Минимальная сопоставимая итоговая сумма" : "Конкурентная итоговая сумма",
+    "Основные сборы раскрыты",
+    `Срок действия до ${rate.validityDate}`,
+    `Включено свободных дней: ${rate.freeDays}`,
+    `Транзитное время: ${rate.transitDays} дн.`
   ];
 
-  if (rate.completenessScore >= 90) reasons.push("High completeness score");
-  if (rate.status === "Late response") reasons.push("Received after Quote v1, requires manager-controlled versioning");
+  if (rate.completenessScore >= 90) reasons.push("Высокий показатель полноты");
+  if (rate.status === "Late response") reasons.push("Получено после Quote v1, требуется версионирование под контролем менеджера");
 
   return reasons;
 }

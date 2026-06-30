@@ -2,49 +2,49 @@ import { expect, test } from "@playwright/test";
 
 test.describe.configure({ mode: "serial" });
 
-test("guided demo smoke flow", async ({ page }) => {
+test("smoke flow управляемого демо", async ({ page }) => {
   await page.request.post("/api/demo/reset");
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /Turn freight inquiries/i })).toBeVisible();
-  await page.getByRole("link", { name: /Open Demo Workspace/i }).click();
+  await expect(page.getByRole("heading", { name: /Превращайте запросы/i })).toBeVisible();
+  await page.getByRole("link", { name: /Открыть демо/i }).click();
 
-  await expect(page.getByRole("heading", { name: "RFQ Inbox" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Входящие RFQ" })).toBeVisible();
   await page.goto("/workspace/cases/case-cl-001");
 
-  await expect(page.getByText("Rate Comparison")).toBeVisible();
+  await expect(page.getByText("Сравнение ставок")).toBeVisible();
   await expect(page.getByRole("table").getByText("Andes Link Freight")).toBeVisible();
-  await page.getByRole("button", { name: /Create Quote v1/i }).click();
+  await page.getByRole("button", { name: /Создать Quote v1/i }).click();
 
   await expect(page.getByText("Quote v1")).toBeVisible();
-  await page.getByRole("button", { name: /Receive late Excel rate/i }).click();
-  await expect(page.getByText("Potential improvement")).toBeVisible();
+  await page.getByRole("button", { name: /Получить позднюю Excel-ставку/i }).click();
+  await expect(page.getByText("Потенциальная экономия")).toBeVisible();
 });
 
-test("scenario-specific risk views are data-driven", async ({ page }) => {
+test("сценарные риски управляются данными", async ({ page }) => {
   await page.request.post("/api/demo/reset");
   await page.goto("/workspace/cases/case-cn-001");
-  await expect(page.getByText("Latest explicit quantity selected")).toBeVisible();
-  await expect(page.getByText("Please revise to 2 x 40HC")).toBeVisible();
+  await expect(page.getByText("Выбрано последнее явное количество")).toBeVisible();
+  await expect(page.getByText("Пожалуйста, измените на 2 x 40HC")).toBeVisible();
 
   await page.goto("/workspace/cases/case-za-002");
-  await expect(page.getByRole("heading", { name: "Manual Review Required" })).toBeVisible();
-  await expect(page.getByText(/Temperature-controlled or reefer cargo/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Требуется ручная проверка" })).toBeVisible();
+  await expect(page.getByText(/Температурный или рефрижераторный груз/i)).toBeVisible();
 });
 
-test("new pasted chat creates RFQ, matches China agents, and processes simulated replies", async ({ page }) => {
+test("новый вставленный чат создает RFQ, подбирает агентов Китая и обрабатывает ответы", async ({ page }) => {
   await page.request.post("/api/demo/reset");
   await page.goto("/workspace/new");
 
-  await page.getByLabel(/Chat \/ Messenger/i).check();
-  await page.getByRole("button", { name: /Create RFQ and match agents/i }).click();
+  await page.getByLabel(/Чат \/ мессенджер/i).check();
+  await page.getByRole("button", { name: /Создать RFQ и подобрать агентов/i }).click();
 
-  await expect(page.getByRole("heading", { name: /Live RFQ · Ningbo -> Hamburg/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Живой RFQ · Ningbo -> Hamburg/i })).toBeVisible();
   await expect(page.getByText("Ningbo Harbor Partners")).toBeVisible();
 
-  await page.getByRole("button", { name: /Approve & simulate sending/i }).click();
-  await expect(page.getByText("RFQ drafts sent to agents")).toBeVisible();
+  await page.getByRole("button", { name: /Согласовать и имитировать отправку/i }).click();
+  await expect(page.getByText("Черновики RFQ отправлены агентам")).toBeVisible();
 
-  await page.getByRole("button", { name: /Process simulated replies/i }).click();
-  await expect(page.getByText("Simulated agent replies processed")).toBeVisible();
-  await expect(page.getByRole("button", { name: /Create Quote v1/i })).toBeVisible();
+  await page.getByRole("button", { name: /Обработать имитированные ответы/i }).click();
+  await expect(page.getByText("Имитированные ответы агентов обработаны")).toBeVisible();
+  await expect(page.getByRole("button", { name: /Создать Quote v1/i })).toBeVisible();
 });

@@ -17,7 +17,7 @@ export function buildQuoteDraft(input: {
   const decision = canCreateQuote(rate);
 
   if (!decision.allowed) {
-    throw new Error(`Quote cannot be created: ${decision.blockers.join(", ")}`);
+    throw new Error(`Котировку нельзя создать: ${decision.blockers.join(", ")}`);
   }
 
   const finalCustomerPrice = calculateFinalCustomerPrice(rate, commercialAdjustment);
@@ -33,15 +33,15 @@ export function buildQuoteDraft(input: {
     finalCustomerPrice,
     createdAt: new Date(),
     draftText: [
-      `Quote version ${versionNumber} for ${rfqCase.requestNumber}`,
-      `Route: ${rfqCase.originPort ?? rfqCase.originCity} -> ${rfqCase.destinationPort ?? rfqCase.destinationCity}`,
-      `Cargo: ${rfqCase.cargoDescription}`,
-      `Containers: ${rfqCase.containerQuantity} x ${rfqCase.containerType}`,
-      `Selected option: ${rate.shippingLine}, ${rate.transitDays} days, ${rate.freeDays} free days`,
-      `Known total: ${rate.currency} ${rate.knownTotal}`,
-      `Commercial adjustment: ${rate.currency} ${commercialAdjustment}`,
-      `Final customer price: ${rate.currency} ${finalCustomerPrice}`,
-      "Status: Draft - commercial approval required."
+      `Версия котировки ${versionNumber} для ${rfqCase.requestNumber}`,
+      `Маршрут: ${rfqCase.originPort ?? rfqCase.originCity} -> ${rfqCase.destinationPort ?? rfqCase.destinationCity}`,
+      `Груз: ${rfqCase.cargoDescription}`,
+      `Контейнеры: ${rfqCase.containerQuantity} x ${rfqCase.containerType}`,
+      `Выбранный вариант: ${rate.shippingLine}, ${rate.transitDays} дн., свободных дней: ${rate.freeDays}`,
+      `Известная сумма: ${rate.currency} ${rate.knownTotal}`,
+      `Коммерческая надбавка: ${rate.currency} ${commercialAdjustment}`,
+      `Финальная цена для клиента: ${rate.currency} ${finalCustomerPrice}`,
+      "Статус: черновик - требуется коммерческое согласование."
     ].join("\n")
   };
 }

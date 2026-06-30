@@ -3,12 +3,12 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "FreightPilot",
-  description: "AI Quote Desk for Freight Forwarders"
+  description: "AI Quote Desk для экспедиторов"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ru" suppressHydrationWarning>
       <body suppressHydrationWarning>{children}</body>
     </html>
   );

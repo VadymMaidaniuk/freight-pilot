@@ -49,7 +49,7 @@ async function main() {
   }
 
   await seedAll(db);
-  console.log(reset ? "Demo database reset and seeded." : "Demo database seeded.");
+  console.log(reset ? "Демо-база сброшена и заполнена." : "Демо-база заполнена.");
 }
 
 main()

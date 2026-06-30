@@ -161,13 +161,14 @@ export class LMStudioAIService implements AIService {
 
   async extractRFQ(input: { sourceType: "email" | "conversation" | "call_notes"; rawText: string }): Promise<RFQExtraction> {
     const prompt = [
-      "Extract a freight RFQ from the user input.",
-      "Return only JSON matching this shape:",
+      "Извлеки freight RFQ из пользовательского текста.",
+      "Верни только JSON по этой форме:",
       "{ fields: { incoterms, originCountry, originCity, originPort, destinationCountry, destinationCity, destinationPort, containerType, containerQuantity, cargoDescription, packaging, grossWeight, volume, cargoReadyDate, quotationDeadline, specialRequirements, cargoFlags }, assertions: [{ fieldName, value, verificationStatus, confidence, evidence }], missingFields: [], riskFlags: [], clarificationDraft: string }",
-      "verificationStatus must be one of Confirmed, Needs confirmation, Missing, Conflict detected.",
-      "confidence must be High, Medium or Low.",
-      "Never invent missing facts.",
-      `Source type: ${input.sourceType}`,
+      "verificationStatus должен быть одним из: Confirmed, Needs confirmation, Missing, Conflict detected.",
+      "confidence должен быть High, Medium или Low.",
+      "Не выдумывай отсутствующие факты.",
+      "Пользовательские текстовые поля, evidence и clarificationDraft возвращай на русском языке.",
+      `Тип источника: ${input.sourceType}`,
       input.rawText
     ].join("\n\n");
 
@@ -182,11 +183,12 @@ export class LMStudioAIService implements AIService {
 
   async normalizeRateReply(input: { rawText: string; sourceType: "email" | "messy_text" | "xlsx" }): Promise<RateExtraction> {
     const prompt = [
-      "Normalize a freight rate reply.",
-      "Return only JSON matching this shape:",
+      "Нормализуй ответ агента по freight rate.",
+      "Верни только JSON по этой форме:",
       "{ agentName, oceanFreight, currency, rateUnit, originCharges, documentationFee, destinationCharges, shippingLine, transitDays, route, validityDate, freeDays, inclusions, exclusions, conditions, completenessScore, reviewRequired, sourceEvidence }",
-      "All numeric totals must be numbers. Never calculate customer sell price.",
-      `Source type: ${input.sourceType}`,
+      "Все числовые суммы должны быть числами. Никогда не рассчитывай клиентскую продажную цену.",
+      "Пользовательские пояснения, inclusions, exclusions, conditions и sourceEvidence возвращай на русском языке.",
+      `Тип источника: ${input.sourceType}`,
       input.rawText
     ].join("\n\n");
 
@@ -200,15 +202,15 @@ export class LMStudioAIService implements AIService {
   }
 
   async generateClarificationDraft(rfqCaseId: string) {
-    return `Please confirm the missing operational fields for ${rfqCaseId} before final customer quote preparation.`;
+    return `Пожалуйста, подтвердите недостающие операционные поля для ${rfqCaseId} перед подготовкой финальной клиентской котировки.`;
   }
 
   async generateRFQDraft(rfqCaseId: string, agentId: string) {
-    return `RFQ ${rfqCaseId}: please provide ocean FCL rate, validity, free days, inclusions, exclusions and transit time. Agent ${agentId}.`;
+    return `RFQ ${rfqCaseId}: пожалуйста, предоставьте ставку ocean FCL, срок действия, свободные дни, включения, исключения и транзитное время. Агент ${agentId}.`;
   }
 
   async generateCustomerQuoteDraft(quoteId: string) {
-    return `Quote ${quoteId}: draft generated from selected validated rate. Commercial approval required.`;
+    return `Quote ${quoteId}: черновик создан на основе выбранной валидированной ставки. Требуется коммерческое согласование.`;
   }
 
   private async completeJson(prompt: string, schemaName: string, schema: object) {
@@ -222,11 +224,11 @@ export class LMStudioAIService implements AIService {
         {
           role: "system",
           content: [
-            "You are a freight operations extraction engine.",
-            "Return the final JSON object immediately.",
-            "Do not think step by step.",
-            "Do not output reasoning, analysis, markdown, comments, or <think> blocks.",
-            "If a fact is missing, use null or Missing. Never invent missing facts."
+            "Ты движок извлечения данных для freight operations.",
+            "Сразу возвращай финальный JSON-объект.",
+            "Не рассуждай пошагово.",
+            "Не выводи reasoning, analysis, markdown, comments или <think> blocks.",
+            "Если факт отсутствует, используй null или Missing. Никогда не выдумывай отсутствующие факты."
           ].join(" ")
         },
         {
@@ -261,12 +263,12 @@ export class LMStudioAIService implements AIService {
     });
 
     if (!response.ok) {
-      throw new Error(`LM Studio request failed: ${response.status}`);
+      throw new Error(`Запрос к LM Studio завершился ошибкой: ${response.status}`);
     }
 
     const payload = (await response.json()) as ChatCompletionResponse;
     const content = payload.choices?.[0]?.message?.content;
-    if (!content) throw new Error("LM Studio returned an empty response");
+    if (!content) throw new Error("LM Studio вернула пустой ответ");
 
     return extractJson(content);
   }

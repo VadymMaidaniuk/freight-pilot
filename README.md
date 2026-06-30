@@ -1,8 +1,8 @@
 # FreightPilot
 
-Investor-grade demo for an AI Quote Desk for freight forwarders.
+Демо AI Quote Desk для экспедиторов, подготовленное для показа инвестору.
 
-## Local Run
+## Локальный запуск
 
 ```bash
 docker compose up -d postgres
@@ -13,18 +13,18 @@ npm run fixtures:xlsx
 npm run dev
 ```
 
-Open:
+Открыть:
 
 ```text
 http://127.0.0.1:3000
 http://127.0.0.1:3000/workspace
 ```
 
-## Environment
+## Окружение
 
-Copy `.env.example` to `.env.local` and adjust if needed.
+Скопируйте `.env.example` в `.env.local` и при необходимости измените параметры.
 
-Default local LLM configuration:
+Локальная конфигурация LLM по умолчанию:
 
 ```bash
 AI_PROVIDER=lmstudio
@@ -37,9 +37,9 @@ LMSTUDIO_TOP_P=0.1
 LMSTUDIO_STRUCTURED_OUTPUT=true
 ```
 
-Guided Demo does not need an LLM. Live Proof uses the configured provider and falls back to validated fixture output if the response cannot pass Zod validation.
+Управляемое демо не требует LLM. Проверка AI использует настроенного провайдера и откатывается к валидированному результату фикстуры, если ответ не проходит Zod-валидацию.
 
-If a local reasoning model is slow, prefer:
+Если локальная reasoning-модель работает медленно, используйте:
 
 ```bash
 LMSTUDIO_TIMEOUT_MS=7000
@@ -49,19 +49,19 @@ LMSTUDIO_TOP_P=0.1
 LMSTUDIO_STRUCTURED_OUTPUT=true
 ```
 
-Leave `LMSTUDIO_REASONING_EFFORT` empty unless the loaded model/server accepts that parameter. If LM Studio rejects it, the app will fall back after the configured timeout.
+Оставьте `LMSTUDIO_REASONING_EFFORT` пустым, если загруженная модель или сервер не поддерживает этот параметр. Если LM Studio отклонит его, приложение перейдет в резервный режим после настроенного таймаута.
 
 ## Supabase vs Postgres
 
-Supabase Postgres is PostgreSQL hosted by Supabase. The app uses Drizzle against `DATABASE_URL`, so local development can run a plain Docker Postgres, while Vercel production should point `DATABASE_URL` to Supabase Postgres.
+Supabase Postgres - это PostgreSQL, размещенный в Supabase. Приложение использует Drizzle поверх `DATABASE_URL`, поэтому локально можно запускать обычный Docker Postgres, а продакшен на Vercel должен указывать `DATABASE_URL` на Supabase Postgres.
 
-Supabase Storage is represented by attachment metadata and the `synthetic-rate-sheets` bucket convention. The generated local fixture is:
+Supabase Storage представлен метаданными вложений и соглашением bucket `synthetic-rate-sheets`. Локально генерируется фикстура:
 
 ```text
 fixtures/synthetic-rate-sheets/southern-gate-late-rate.xlsx
 ```
 
-## Verification
+## Проверка
 
 ```bash
 npm run typecheck
@@ -72,16 +72,16 @@ npm run test:e2e
 npm audit --omit=dev
 ```
 
-## User Flow
+## Пользовательский сценарий
 
-Open `http://127.0.0.1:3000/workspace/new` or click **New RFQ** in the inbox.
+Откройте `http://127.0.0.1:3000/workspace/new` или нажмите **Новый RFQ** во входящих.
 
-1. Choose Email, Chat / Messenger, or Call notes.
-2. Paste synthetic customer input.
-3. Click **Create RFQ and match agents**.
-4. Review extracted fields, evidence, risks, and the calculated agent shortlist.
-5. Click **Approve & simulate sending**.
-6. Click **Process simulated replies**.
-7. Review normalized rates and create Quote v1.
+1. Выберите письмо, чат / мессенджер или заметки звонка.
+2. Вставьте синтетический текст клиента.
+3. Нажмите **Создать RFQ и подобрать агентов**.
+4. Проверьте извлеченные поля, доказательства, риски и рассчитанный короткий список агентов.
+5. Нажмите **Согласовать и имитировать отправку**.
+6. Нажмите **Обработать имитированные ответы**.
+7. Проверьте нормализованные ставки и создайте Quote v1.
 
-No real external emails are sent. Simulated sends create internal agent request records and activity events.
+Реальные внешние письма не отправляются. Имитированные отправки создают внутренние записи запросов агентам и события активности.

@@ -1,9 +1,9 @@
-Synthetic guided-demo rate sheets live here for local development.
+Здесь лежат синтетические таблицы ставок для локальной разработки управляемого демо.
 
-Run:
+Запуск:
 
 ```bash
 npm run fixtures:xlsx
 ```
 
-The generated `southern-gate-late-rate.xlsx` mirrors the object that should be uploaded to the private Supabase Storage bucket `synthetic-rate-sheets` for the hosted demo.
+Сгенерированный `southern-gate-late-rate.xlsx` повторяет объект, который нужно загрузить в приватный bucket Supabase Storage `synthetic-rate-sheets` для размещенного демо.

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { getFallbackStore, resetFallbackStore } from "./fallback-store";
 
-describe("fallback demo reset", () => {
-  it("restores initial scenario state", () => {
+describe("сброс резервного демо-хранилища", () => {
+  it("восстанавливает начальное состояние сценариев", () => {
     const store = getFallbackStore();
     store.quotes.push({
       id: "quote-temp",

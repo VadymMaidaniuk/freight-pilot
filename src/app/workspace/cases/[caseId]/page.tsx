@@ -16,6 +16,7 @@ import { evaluateManualReview } from "@/lib/domain/field-rules";
 import { calculateLateRateImprovement } from "@/lib/domain/quotes";
 import { explainRecommendation, rankRateOptions } from "@/lib/domain/rates";
 import { summarizeRound } from "@/lib/domain/state-machine";
+import { fieldLabel, sourceTypeLabel, verificationStatusLabel } from "@/lib/labels";
 import { loadCaseSnapshot } from "@/lib/repositories/workspace-repository";
 import { formatMoney } from "@/lib/utils";
 
@@ -59,23 +60,23 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
           </div>
           <h1 className="mt-2 text-display-lg font-semibold text-ink-text">{snapshot.scenario.title}</h1>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-text">
-            Deadline {snapshot.case.quotationDeadline}. Response cutoff {snapshot.case.responseCutoff}. Demo timeline accelerated.
+            Дедлайн котировки: {snapshot.case.quotationDeadline}. Отсечка ответов: {snapshot.case.responseCutoff}. Демо-таймлайн ускорен.
           </p>
         </div>
         <div className="grid grid-cols-4 gap-2 rounded-lg border border-border-hairline bg-white p-3 text-center">
-          <Metric label="Sent" value={roundSummary.requestsSent} />
-          <Metric label="Received" value={roundSummary.responsesReceived} />
-          <Metric label="Comparable" value={roundSummary.comparableRates} />
-          <Metric label="Incomplete" value={roundSummary.incompleteRates} />
+          <Metric label="Отправлено" value={roundSummary.requestsSent} />
+          <Metric label="Получено" value={roundSummary.responsesReceived} />
+          <Metric label="Сопоставимо" value={roundSummary.comparableRates} />
+          <Metric label="Неполных" value={roundSummary.incompleteRates} />
         </div>
       </div>
 
       {manualReview.required && snapshot.case.status === "manual_review" ? (
         <Panel className="border-error/30">
-          <PanelHeader title="Manual Review Required" eyebrow="Operational validation" />
+          <PanelHeader title="Требуется ручная проверка" eyebrow="Операционная валидация" />
           <PanelBody className="space-y-4">
             <p className="max-w-3xl text-sm leading-6 text-muted-text">
-              This RFQ requires operational validation before agent requests can be sent.
+              Этот RFQ требует операционной проверки перед отправкой запросов агентам.
             </p>
             <div className="grid gap-3 md:grid-cols-2">
               {manualReview.reasons.map((reason) => (
@@ -87,7 +88,7 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
             </div>
             <form action={overrideManualReviewAction}>
               <input type="hidden" name="caseId" value={snapshot.case.id} />
-              <Button>Override and continue</Button>
+              <Button>Снять проверку и продолжить</Button>
             </form>
           </PanelBody>
         </Panel>
@@ -95,26 +96,26 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_1.4fr_0.9fr]">
         <Panel>
-          <PanelHeader title="RFQ Details" eyebrow={snapshot.input.sourceType.replace("_", " ")} />
+          <PanelHeader title="Детали RFQ" eyebrow={sourceTypeLabel(snapshot.input.sourceType)} />
           <PanelBody className="space-y-4">
-            <Field label="Route" value={`${snapshot.case.originPort ?? snapshot.case.originCity} -> ${snapshot.case.destinationPort ?? snapshot.case.destinationCity}`} />
-            <Field label="Cargo" value={snapshot.case.cargoDescription ?? "Missing"} />
-            <Field label="Containers" value={`${snapshot.case.containerQuantity ?? "?"} x ${snapshot.case.containerType ?? "Missing"}`} />
-            <Field label="Incoterms" value={snapshot.case.incoterms ?? "Missing"} />
-            <Field label="Cargo ready" value={snapshot.case.cargoReadyDate ?? snapshot.case.cargoReadyInfo ?? "Missing"} />
-            <Field label="Service scope" value={snapshot.case.serviceScope ?? "Missing"} />
+            <Field label="Маршрут" value={`${snapshot.case.originPort ?? snapshot.case.originCity} -> ${snapshot.case.destinationPort ?? snapshot.case.destinationCity}`} />
+            <Field label="Груз" value={snapshot.case.cargoDescription ?? "Нет данных"} />
+            <Field label="Контейнеры" value={`${snapshot.case.containerQuantity ?? "?"} x ${snapshot.case.containerType ?? "Нет данных"}`} />
+            <Field label="Incoterms" value={snapshot.case.incoterms ?? "Нет данных"} />
+            <Field label="Готовность груза" value={snapshot.case.cargoReadyDate ?? snapshot.case.cargoReadyInfo ?? "Нет данных"} />
+            <Field label="Объем сервиса" value={snapshot.case.serviceScope ?? "Нет данных"} />
             <div className="border-t border-border-hairline pt-4">
-              <p className="mb-2 text-label-caps uppercase tracking-wide text-muted-text">Field assertions</p>
+              <p className="mb-2 text-label-caps uppercase tracking-wide text-muted-text">Извлеченные поля</p>
               <div className="space-y-2">
                 {snapshot.fields.map((field) => (
                   <div key={field.id} className="rounded-md border border-border-hairline bg-surface-container-lowest p-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-semibold text-ink-text">{field.fieldName.replaceAll("_", " ")}</span>
+                      <span className="text-sm font-semibold text-ink-text">{fieldLabel(field.fieldName)}</span>
                       <Badge tone={field.verificationStatus === "Confirmed" ? "teal" : field.verificationStatus === "Missing" ? "amber" : "blue"}>
-                        {field.verificationStatus}
+                        {verificationStatusLabel(field.verificationStatus)}
                       </Badge>
                     </div>
-                    <p className="mt-1 text-sm text-muted-text">{field.value ?? "No value"}</p>
+                    <p className="mt-1 text-sm text-muted-text">{field.value ?? "Нет значения"}</p>
                     <p className="mt-2 border-l-2 border-ai-marker pl-2 text-xs leading-5 text-muted-text">{field.evidence}</p>
                   </div>
                 ))}
@@ -125,7 +126,7 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
 
         <div className="space-y-6">
           <Panel>
-            <PanelHeader title="Activity and Rate Replies" eyebrow="Operational history" />
+            <PanelHeader title="Активность и ответы по ставкам" eyebrow="Операционная история" />
             <PanelBody className="space-y-4">
               {snapshot.activityEvents.map((event) => (
                 <div key={event.id} className="flex gap-3">
@@ -142,17 +143,17 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
           </Panel>
 
           <Panel>
-            <PanelHeader title="Rate Comparison" eyebrow="Deterministic ranking" />
+            <PanelHeader title="Сравнение ставок" eyebrow="Детерминированное ранжирование" />
             <div className="overflow-x-auto">
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Agent</th>
-                    <th>Total</th>
-                    <th>Transit</th>
-                    <th>Free days</th>
-                    <th>Completeness</th>
-                    <th>Status</th>
+                    <th>Агент</th>
+                    <th>Итого</th>
+                    <th>Транзит</th>
+                    <th>Свободные дни</th>
+                    <th>Полнота</th>
+                    <th>Статус</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -165,7 +166,7 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                           <div className="text-xs text-muted-text">{rate.shippingLine}</div>
                         </td>
                         <td className="font-mono text-data-mono font-semibold tabular-nums">{formatMoney(rate.knownTotal, rate.currency)}</td>
-                        <td className="font-mono text-data-mono">{rate.transitDays} days</td>
+                        <td className="font-mono text-data-mono">{rate.transitDays} дн.</td>
                         <td className="font-mono text-data-mono">{rate.freeDays}</td>
                         <td className="font-mono text-data-mono">{rate.completenessScore}%</td>
                         <td>
@@ -182,11 +183,11 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
 
         <div className="space-y-6">
           <Panel>
-            <PanelHeader title="Decision Panel" eyebrow="Manager controlled" />
+            <PanelHeader title="Панель решения" eyebrow="Под контролем менеджера" />
             <PanelBody className="space-y-5">
               {recommended ? (
                 <div className="rounded-md border border-primary-container/30 bg-primary-container/10 p-4">
-                  <p className="text-label-caps uppercase tracking-wide text-primary">Recommended</p>
+                  <p className="text-label-caps uppercase tracking-wide text-primary">Рекомендовано</p>
                   <p className="mt-1 font-semibold text-ink-text">
                     {snapshot.agents.find((agent) => agent.id === recommended.agentId)?.companyName}
                   </p>
@@ -199,7 +200,7 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                     <input type="hidden" name="caseId" value={snapshot.case.id} />
                     <input type="hidden" name="rateOptionId" value={recommended.id} />
                     <label className="block text-xs font-semibold uppercase tracking-wide text-muted-text">
-                      Commercial adjustment
+                      Коммерческая надбавка
                       <input
                         name="commercialAdjustment"
                         type="number"
@@ -208,13 +209,13 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                       />
                     </label>
                     <Button className="w-full">
-                      Create Quote v{currentQuote ? currentQuote.currentVersion + 1 : 1}
+                      Создать Quote v{currentQuote ? currentQuote.currentVersion + 1 : 1}
                       <ArrowRight className="h-4 w-4" aria-hidden />
                     </Button>
                   </form>
                 </div>
               ) : (
-                <p className="text-sm text-muted-text">No comparable rate yet.</p>
+                <p className="text-sm text-muted-text">Сопоставимой ставки пока нет.</p>
               )}
 
               {snapshot.case.id === "case-cl-001" && !lateRate ? (
@@ -222,7 +223,7 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                   <input type="hidden" name="caseId" value={snapshot.case.id} />
                   <Button variant="secondary" className="w-full">
                     <FileSpreadsheet className="h-4 w-4" aria-hidden />
-                    Receive late Excel rate
+                    Получить позднюю Excel-ставку
                   </Button>
                 </form>
               ) : null}
@@ -231,23 +232,23 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                 <form action={processSimulatedRepliesAction}>
                   <input type="hidden" name="caseId" value={snapshot.case.id} />
                   <Button variant="secondary" className="w-full">
-                    Process simulated replies
+                    Обработать имитированные ответы
                   </Button>
                 </form>
               ) : null}
 
               {lateImprovement !== null ? (
                 <div className="rounded-md border border-secondary-container bg-secondary-container/40 p-4">
-                  <p className="text-label-caps uppercase tracking-wide text-on-secondary-container">New rate after Quote v1</p>
+                  <p className="text-label-caps uppercase tracking-wide text-on-secondary-container">Новая ставка после Quote v1</p>
                   <p className="mt-1 font-mono text-2xl font-semibold tabular-nums text-ink-text">{formatMoney(lateImprovement)}</p>
-                  <p className="mt-2 text-sm leading-5 text-muted-text">Potential improvement compared with current selected option. Quote v1 remains unchanged.</p>
+                  <p className="mt-2 text-sm leading-5 text-muted-text">Потенциальная экономия относительно текущего выбранного варианта. Quote v1 остается без изменений.</p>
                 </div>
               ) : null}
             </PanelBody>
           </Panel>
 
           <Panel>
-            <PanelHeader title="Agent Shortlist" eyebrow="Calculated from coverage and metrics" />
+            <PanelHeader title="Короткий список агентов" eyebrow="Расчет по покрытию и метрикам" />
             <PanelBody className="space-y-3">
               {matches.slice(0, 5).map((match) => (
                 <div key={match.agent.id} className="rounded-md border border-border-hairline bg-white p-3">
@@ -259,7 +260,7 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                     <span className="font-mono text-sm font-semibold text-primary">{match.score}</span>
                   </div>
                   <p className="mt-2 text-xs leading-5 text-muted-text">
-                    Response rate {match.metric.responseRate}%, median {match.metric.medianResponseMinutes} min, complete-rate {match.metric.quoteCompletenessRate}%.
+                    Ответы {match.metric.responseRate}%, медиана {match.metric.medianResponseMinutes} мин, полнота ставок {match.metric.quoteCompletenessRate}%.
                   </p>
                 </div>
               ))}
@@ -272,7 +273,7 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                   ))}
                   <Button className="w-full">
                     <Send className="h-4 w-4" aria-hidden />
-                    Approve & simulate sending
+                    Согласовать и имитировать отправку
                   </Button>
                 </form>
               ) : null}
@@ -280,10 +281,10 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
           </Panel>
 
           <Panel>
-            <PanelHeader title="Quote History" eyebrow="Versioned" />
+            <PanelHeader title="История котировок" eyebrow="Версионирование" />
             <PanelBody className="space-y-3">
               {snapshot.quoteVersions.length === 0 ? (
-                <p className="text-sm text-muted-text">No customer quote created yet.</p>
+                <p className="text-sm text-muted-text">Клиентская котировка пока не создана.</p>
               ) : (
                 snapshot.quoteVersions
                   .sort((a, b) => b.versionNumber - a.versionNumber)
@@ -293,7 +294,7 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                         <p className="font-semibold text-ink-text">Quote v{version.versionNumber}</p>
                         <p className="font-mono text-sm tabular-nums">{formatMoney(version.finalCustomerPrice)}</p>
                       </div>
-                      <p className="mt-1 text-xs text-muted-text">Draft - commercial approval required</p>
+                      <p className="mt-1 text-xs text-muted-text">Черновик - требуется коммерческое согласование</p>
                     </div>
                   ))
               )}

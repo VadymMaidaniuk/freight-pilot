@@ -1,4 +1,5 @@
 import type { CaseStatus, RateOption } from "@/lib/types";
+import { caseStatusLabel, rateStatusLabel } from "@/lib/labels";
 import { Badge } from "./ui/badge";
 
 export function CaseStatusBadge({ status }: { status: CaseStatus }) {
@@ -11,10 +12,10 @@ export function CaseStatusBadge({ status }: { status: CaseStatus }) {
           ? "teal"
           : "neutral";
 
-  return <Badge tone={tone}>{status.replaceAll("_", " ")}</Badge>;
+  return <Badge tone={tone}>{caseStatusLabel(status)}</Badge>;
 }
 
 export function RateStatusBadge({ status }: { status: RateOption["status"] }) {
   const tone = status === "Incomplete" || status === "Needs review" ? "amber" : status === "Late response" ? "blue" : status === "Recommended" ? "teal" : "neutral";
-  return <Badge tone={tone}>{status}</Badge>;
+  return <Badge tone={tone}>{rateStatusLabel(status)}</Badge>;
 }

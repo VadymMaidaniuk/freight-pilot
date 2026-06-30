@@ -3,18 +3,18 @@ import Link from "next/link";
 
 const valueAreas = [
   {
-    title: "RFQ Intake",
-    body: "Fragmented emails, chats and call notes become structured cases with evidence, missing fields and conflicts retained.",
+    title: "Прием RFQ",
+    body: "Разрозненные письма, чаты и заметки звонков превращаются в структурированные кейсы с доказательствами, пропущенными полями и сохраненными конфликтами.",
     icon: ClipboardList
   },
   {
-    title: "Agent Intelligence",
-    body: "Coverage, cargo capability and transparent historical metrics drive the shortlist before any RFQ is sent.",
+    title: "Подбор агентов",
+    body: "География, грузовая специализация и прозрачные исторические метрики формируют короткий список до отправки RFQ.",
     icon: Network
   },
   {
-    title: "Rate Comparison",
-    body: "Late, incomplete and Excel-originated replies normalize into comparable options without changing prior quote versions.",
+    title: "Сравнение ставок",
+    body: "Поздние, неполные и Excel-ответы нормализуются в сопоставимые варианты, не меняя уже созданные версии котировок.",
     icon: GitCompareArrows
   }
 ];
@@ -34,20 +34,20 @@ export default function LandingPage() {
         <div className="relative z-10 mx-auto w-full max-w-6xl">
           <p className="mb-4 text-label-caps uppercase tracking-[0.22em] text-primary-fixed-dim">FreightPilot</p>
           <h1 className="max-w-3xl text-[42px] font-semibold leading-[1.08] tracking-normal md:text-[60px]">
-            Turn freight inquiries into ready-to-send quotes - faster, with full control.
+            Превращайте запросы на перевозку в готовые котировки быстрее и под полным контролем.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-7 text-inverse-on-surface/82">
-            AI Quote Desk for freight forwarders. Built to show evidence, missing fields, agent fit, normalized rates and controlled quote decisions.
+            AI Quote Desk для экспедиторов. Показывает доказательства, недостающие поля, соответствие агентов, нормализованные ставки и контролируемые решения по котировкам.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link
               href="/workspace"
               className="inline-flex h-12 items-center gap-2 rounded-md bg-primary-container px-5 text-sm font-bold text-white transition hover:brightness-95"
             >
-              Open Demo Workspace
+              Открыть демо
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
-            <span className="text-sm font-medium text-inverse-on-surface/70">Interactive demonstration using synthetic data.</span>
+            <span className="text-sm font-medium text-inverse-on-surface/70">Интерактивная демонстрация на синтетических данных.</span>
           </div>
         </div>
       </section>

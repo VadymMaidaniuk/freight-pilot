@@ -6,10 +6,10 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/workspace", label: "RFQ Inbox", icon: Inbox },
-  { href: "/workspace/quotes", label: "Active Quotes", icon: Quote },
-  { href: "/workspace/approvals", label: "Approvals", icon: ClipboardCheck },
-  { href: "/workspace/agents", label: "Agent Network", icon: Network }
+  { href: "/workspace", label: "Входящие RFQ", icon: Inbox },
+  { href: "/workspace/quotes", label: "Котировки", icon: Quote },
+  { href: "/workspace/approvals", label: "Согласования", icon: ClipboardCheck },
+  { href: "/workspace/agents", label: "Агенты", icon: Network }
 ];
 
 export function SidebarNav() {
@@ -51,8 +51,8 @@ export function SidebarNav() {
       </nav>
 
       <div className="hidden border-t border-white/10 px-5 py-5 text-xs text-primary-fixed-dim/70 md:absolute md:bottom-0 md:left-0 md:right-0 md:block">
-        <p className="font-semibold text-white">Quotation Manager</p>
-        <p>Guided Demo mode</p>
+        <p className="font-semibold text-white">Менеджер котировок</p>
+        <p>Режим управляемого демо</p>
       </div>
     </aside>
   );

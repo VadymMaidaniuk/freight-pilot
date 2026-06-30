@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { heuristicExtractRFQ } from "./rfq-heuristics";
 
-describe("RFQ heuristic fallback", () => {
-  it("extracts China origin from pasted chat when LLM is unavailable", () => {
+describe("эвристический резерв RFQ", () => {
+  it("извлекает отправление из Китая из вставленного чата без LLM", () => {
     const extraction = heuristicExtractRFQ(
       "conversation",
-      "Customer: Need Ningbo to Hamburg for 2 x 40HC electronics. FOB Ningbo. Cargo ready next week."
+      "Клиент: Нужно Ningbo - Hamburg, 2 x 40HC, электроника. FOB Ningbo. Груз будет готов на следующей неделе."
     );
 
     expect(extraction.fields.originCountry).toBe("China");

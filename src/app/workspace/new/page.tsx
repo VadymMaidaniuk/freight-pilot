@@ -5,9 +5,9 @@ import { Panel, PanelBody, PanelHeader } from "@/components/ui/panel";
 
 export const dynamic = "force-dynamic";
 
-const sampleChat = `09:12 Customer: Need Ningbo to Hamburg for 2 x 40HC electronics.
-09:18 Desk: Please confirm Incoterms and ready date.
-09:24 Customer: FOB Ningbo. Cargo ready next week. Please quote ocean FCL.`;
+const sampleChat = `09:12 Клиент: Нужно Ningbo - Hamburg, 2 x 40HC, электроника.
+09:18 Деск: Подтвердите Incoterms и дату готовности груза.
+09:24 Клиент: FOB Ningbo. Груз будет готов на следующей неделе. Нужна ставка ocean FCL.`;
 
 export default async function NewRFQPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;
@@ -15,19 +15,19 @@ export default async function NewRFQPage({ searchParams }: { searchParams: Promi
   return (
     <div className="space-y-6 pb-20 md:pb-0">
       <div>
-        <p className="text-label-caps uppercase tracking-wide text-primary">Live intake</p>
-        <h1 className="mt-1 text-display-lg font-semibold text-ink-text">New RFQ</h1>
+        <p className="text-label-caps uppercase tracking-wide text-primary">Живой ввод</p>
+        <h1 className="mt-1 text-display-lg font-semibold text-ink-text">Новый RFQ</h1>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-text">
-          Paste a customer email, chat or call note. FreightPilot extracts the RFQ, stores a normal case, calculates agent matching from the database and lets the manager approve simulated sends.
+          Вставьте письмо клиента, чат или заметки звонка. FreightPilot извлечет RFQ, сохранит обычный кейс, рассчитает подбор агентов из базы и даст менеджеру согласовать имитацию отправки.
         </p>
       </div>
 
       <Panel>
-        <PanelHeader title="Create RFQ Case" eyebrow="LLM extraction with validated fallback" />
+        <PanelHeader title="Создание RFQ-кейса" eyebrow="LLM-извлечение с проверенным резервным режимом" />
         <PanelBody>
           {params.error === "missing-input" ? (
             <div className="mb-4 rounded-md border border-error/20 bg-error-container p-3 text-sm text-on-error-container">
-              Paste customer input before creating an RFQ.
+              Вставьте текст клиента перед созданием RFQ.
             </div>
           ) : null}
 
@@ -38,9 +38,9 @@ export default async function NewRFQPage({ searchParams }: { searchParams: Promi
                 <span>
                   <span className="flex items-center gap-2 font-semibold text-ink-text">
                     <Mail className="h-4 w-4 text-primary" aria-hidden />
-                    Email
+                    Письмо
                   </span>
-                  <span className="mt-1 block text-sm leading-5 text-muted-text">Pasted customer email.</span>
+                  <span className="mt-1 block text-sm leading-5 text-muted-text">Вставленное письмо клиента.</span>
                 </span>
               </label>
               <label className="flex cursor-pointer items-start gap-3 rounded-md border border-border-hairline bg-white p-4 has-[:checked]:border-primary-container has-[:checked]:bg-primary-container/10">
@@ -48,9 +48,9 @@ export default async function NewRFQPage({ searchParams }: { searchParams: Promi
                 <span>
                   <span className="flex items-center gap-2 font-semibold text-ink-text">
                     <MessageSquareText className="h-4 w-4 text-primary" aria-hidden />
-                    Chat / Messenger
+                    Чат / мессенджер
                   </span>
-                  <span className="mt-1 block text-sm leading-5 text-muted-text">Teams, WhatsApp or messenger paste.</span>
+                  <span className="mt-1 block text-sm leading-5 text-muted-text">Вставка из Teams, WhatsApp или другого мессенджера.</span>
                 </span>
               </label>
               <label className="flex cursor-pointer items-start gap-3 rounded-md border border-border-hairline bg-white p-4 has-[:checked]:border-primary-container has-[:checked]:bg-primary-container/10">
@@ -58,15 +58,15 @@ export default async function NewRFQPage({ searchParams }: { searchParams: Promi
                 <span>
                   <span className="flex items-center gap-2 font-semibold text-ink-text">
                     <Mic className="h-4 w-4 text-primary" aria-hidden />
-                    Call notes
+                    Заметки звонка
                   </span>
-                  <span className="mt-1 block text-sm leading-5 text-muted-text">Free-form notes after a call.</span>
+                  <span className="mt-1 block text-sm leading-5 text-muted-text">Свободные заметки после звонка.</span>
                 </span>
               </label>
             </div>
 
             <label className="block text-sm font-semibold text-ink-text">
-              Customer input
+              Текст клиента
               <textarea
                 name="rawText"
                 rows={14}
@@ -76,12 +76,12 @@ export default async function NewRFQPage({ searchParams }: { searchParams: Promi
             </label>
 
             <div className="rounded-md border border-secondary-container bg-secondary-container/30 p-4 text-sm leading-6 text-on-secondary-container">
-              After creation, open the case, review the extracted fields and shortlist, then approve simulated sending to the selected agents.
+              После создания откройте кейс, проверьте извлеченные поля и короткий список, затем согласуйте имитацию отправки выбранным агентам.
             </div>
 
             <Button type="submit">
               <Send className="h-4 w-4" aria-hidden />
-              Create RFQ and match agents
+              Создать RFQ и подобрать агентов
             </Button>
           </form>
         </PanelBody>

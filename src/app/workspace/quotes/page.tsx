@@ -21,10 +21,10 @@ export default async function ActiveQuotesPage() {
   return (
     <div className="space-y-6 pb-20 md:pb-0">
       <div>
-        <p className="text-label-caps uppercase tracking-wide text-primary">Quote control</p>
-        <h1 className="mt-1 text-display-lg font-semibold text-ink-text">Active Quotes</h1>
+        <p className="text-label-caps uppercase tracking-wide text-primary">Контроль котировок</p>
+        <h1 className="mt-1 text-display-lg font-semibold text-ink-text">Активные котировки</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-text">
-          Customer quote drafts are versioned. Late rates create review decisions and never rewrite prior quote versions.
+          Черновики клиентских котировок версионируются. Поздние ставки создают решение для проверки и не переписывают предыдущие версии.
         </p>
       </div>
 
@@ -32,22 +32,22 @@ export default async function ActiveQuotesPage() {
         <Panel>
           <PanelBody className="flex items-center gap-3 text-muted-text">
             <FileText className="h-5 w-5 text-primary" aria-hidden />
-            No quote drafts yet. Open CL-001 and create Quote v1 from the decision panel.
+            Черновиков котировок пока нет. Откройте CL-001 и создайте Quote v1 из панели решения.
           </PanelBody>
         </Panel>
       ) : (
         <Panel>
-          <PanelHeader title="Customer Quote Drafts" eyebrow="Version history" />
+          <PanelHeader title="Черновики клиентских котировок" eyebrow="История версий" />
           <div className="overflow-x-auto">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Quote</th>
+                  <th>Котировка</th>
                   <th>RFQ</th>
-                  <th>Selected rate</th>
-                  <th>Current price</th>
-                  <th>Status</th>
-                  <th>Late alert</th>
+                  <th>Выбранная ставка</th>
+                  <th>Текущая цена</th>
+                  <th>Статус</th>
+                  <th>Поздняя ставка</th>
                   <th />
                 </tr>
               </thead>
@@ -72,14 +72,14 @@ export default async function ActiveQuotesPage() {
                     <td>{selectedRate ? <RateStatusBadge status={selectedRate.status} /> : null}</td>
                     <td>
                       {lateRate && lateRate.id !== selectedRate?.id ? (
-                        <span className="text-sm font-semibold text-primary">Review late rate</span>
+                        <span className="text-sm font-semibold text-primary">Проверить позднюю ставку</span>
                       ) : (
-                        <span className="text-sm text-muted-text">None</span>
+                        <span className="text-sm text-muted-text">Нет</span>
                       )}
                     </td>
                     <td className="text-right">
                       <Link href={`/workspace/cases/${quote.caseId}`} className="inline-flex h-8 items-center gap-1 rounded-md bg-primary-container px-3 text-xs font-bold text-white">
-                        Open
+                        Открыть
                         <ArrowRight className="h-3 w-3" aria-hidden />
                       </Link>
                     </td>

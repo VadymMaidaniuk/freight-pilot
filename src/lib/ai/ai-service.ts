@@ -20,7 +20,7 @@ export interface AIService {
 
 export class AIValidationFallbackError extends Error {
   constructor(
-    message = "Live extraction could not be safely validated. Demo-safe fallback used.",
+    message = "Оперативное извлечение не прошло безопасную валидацию. Использован безопасный демо-резерв.",
     readonly fallbackPayload?: unknown
   ) {
     super(message);

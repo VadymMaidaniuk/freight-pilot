@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   const rawText = String(formData.get("rawText") ?? "");
 
   if (!rawText.trim()) {
-    return NextResponse.json({ ok: false, message: "Input text is required." }, { status: 400 });
+    return NextResponse.json({ ok: false, message: "Нужно указать входной текст." }, { status: 400 });
   }
 
   const ai = createAIService();
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        message: "Live Proof failed before validation. Check LM Studio availability or use fixture mode."
+        message: "Проверка AI завершилась ошибкой до валидации. Проверьте доступность LM Studio или используйте режим фикстуры."
       },
       { status: 500 }
     );

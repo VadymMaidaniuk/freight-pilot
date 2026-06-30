@@ -26,8 +26,8 @@ export const agentsSeed: Agent[] = [
     externalKey: "CL-ANDES-LINK",
     companyName: "Andes Link Freight",
     status: "active",
-    location: "Valparaiso, Chile",
-    languages: ["English", "Spanish"],
+    location: "Вальпараисо, Чили",
+    languages: ["Английский", "Испанский"],
     supportedServices: ["ocean_fcl", "origin_handling", "customs_coordination"],
     cargoCapabilityTags: ["coffee", "agricultural", "dry_cargo"],
     issueFlags: []
@@ -38,8 +38,8 @@ export const agentsSeed: Agent[] = [
     externalKey: "CL-PACIFIC-AXIS",
     companyName: "Pacific Axis Logistics",
     status: "active",
-    location: "San Antonio, Chile",
-    languages: ["English", "Spanish"],
+    location: "Сан-Антонио, Чили",
+    languages: ["Английский", "Испанский"],
     supportedServices: ["ocean_fcl", "origin_handling"],
     cargoCapabilityTags: ["agricultural", "dry_cargo", "food_grade"],
     issueFlags: []
@@ -50,8 +50,8 @@ export const agentsSeed: Agent[] = [
     externalKey: "CL-SOUTHERN-GATE",
     companyName: "Southern Gate Forwarding",
     status: "active",
-    location: "Santiago, Chile",
-    languages: ["English", "Spanish"],
+    location: "Сантьяго, Чили",
+    languages: ["Английский", "Испанский"],
     supportedServices: ["ocean_fcl", "origin_handling", "reefer"],
     cargoCapabilityTags: ["coffee", "reefer", "agricultural"],
     issueFlags: []
@@ -62,8 +62,8 @@ export const agentsSeed: Agent[] = [
     externalKey: "CN-PEARL-RIVER",
     companyName: "Pearl River Forwarding",
     status: "active",
-    location: "Shenzhen, China",
-    languages: ["English", "Mandarin"],
+    location: "Шэньчжэнь, Китай",
+    languages: ["Английский", "Китайский"],
     supportedServices: ["ocean_fcl", "origin_handling"],
     cargoCapabilityTags: ["electronics", "general_cargo", "dry_cargo"],
     issueFlags: []
@@ -74,8 +74,8 @@ export const agentsSeed: Agent[] = [
     externalKey: "CN-NINGBO-HARBOR",
     companyName: "Ningbo Harbor Partners",
     status: "active",
-    location: "Ningbo, China",
-    languages: ["English", "Mandarin"],
+    location: "Нинбо, Китай",
+    languages: ["Английский", "Китайский"],
     supportedServices: ["ocean_fcl", "origin_handling", "customs_coordination"],
     cargoCapabilityTags: ["electronics", "industrial", "dry_cargo"],
     issueFlags: []
@@ -86,11 +86,11 @@ export const agentsSeed: Agent[] = [
     externalKey: "CN-DRAGON-GATE",
     companyName: "Dragon Gate Logistics",
     status: "active",
-    location: "Shanghai, China",
-    languages: ["English", "Mandarin"],
+    location: "Шанхай, Китай",
+    languages: ["Английский", "Китайский"],
     supportedServices: ["ocean_fcl", "origin_handling"],
     cargoCapabilityTags: ["general_cargo", "dry_cargo"],
-    issueFlags: ["documentation delays"]
+    issueFlags: ["задержки по документам"]
   },
   {
     id: "agent-shenzhen-meridian",
@@ -98,8 +98,8 @@ export const agentsSeed: Agent[] = [
     externalKey: "CN-SHENZHEN-MERIDIAN",
     companyName: "Shenzhen Meridian Cargo",
     status: "active",
-    location: "Shenzhen, China",
-    languages: ["English", "Mandarin"],
+    location: "Шэньчжэнь, Китай",
+    languages: ["Английский", "Китайский"],
     supportedServices: ["ocean_fcl", "origin_handling", "special_handling"],
     cargoCapabilityTags: ["electronics", "special_handling", "dry_cargo"],
     issueFlags: []
@@ -110,8 +110,8 @@ export const agentsSeed: Agent[] = [
     externalKey: "CN-EASTBRIDGE",
     companyName: "EastBridge Ocean",
     status: "active",
-    location: "Shanghai, China",
-    languages: ["English", "Mandarin"],
+    location: "Шанхай, Китай",
+    languages: ["Английский", "Китайский"],
     supportedServices: ["ocean_fcl", "origin_handling"],
     cargoCapabilityTags: ["industrial", "general_cargo"],
     issueFlags: []
@@ -122,11 +122,11 @@ export const agentsSeed: Agent[] = [
     externalKey: "CN-RED-LANTERN",
     companyName: "Red Lantern Freight",
     status: "inactive",
-    location: "Ningbo, China",
-    languages: ["English", "Mandarin"],
+    location: "Нинбо, Китай",
+    languages: ["Английский", "Китайский"],
     supportedServices: ["ocean_fcl"],
     cargoCapabilityTags: ["general_cargo"],
-    issueFlags: ["suspended onboarding"]
+    issueFlags: ["приостановлено подключение"]
   },
   {
     id: "agent-durban-bluewater",
@@ -134,8 +134,8 @@ export const agentsSeed: Agent[] = [
     externalKey: "ZA-DURBAN-BLUEWATER",
     companyName: "Durban Bluewater Logistics",
     status: "active",
-    location: "Durban, South Africa",
-    languages: ["English", "Zulu"],
+    location: "Дурбан, ЮАР",
+    languages: ["Английский", "Зулу"],
     supportedServices: ["ocean_fcl", "origin_handling"],
     cargoCapabilityTags: ["automotive", "dry_cargo"],
     issueFlags: []
@@ -146,8 +146,8 @@ export const agentsSeed: Agent[] = [
     externalKey: "ZA-CAPE-GATEWAY",
     companyName: "Cape Gateway Freight",
     status: "active",
-    location: "Cape Town, South Africa",
-    languages: ["English", "Afrikaans"],
+    location: "Кейптаун, ЮАР",
+    languages: ["Английский", "Африкаанс"],
     supportedServices: ["ocean_fcl", "origin_handling", "reefer"],
     cargoCapabilityTags: ["reefer", "temperature_controlled", "food_grade"],
     issueFlags: []
@@ -158,8 +158,8 @@ export const agentsSeed: Agent[] = [
     externalKey: "ZA-TABLE-BAY-COLD",
     companyName: "Table Bay Cold Chain",
     status: "active",
-    location: "Cape Town, South Africa",
-    languages: ["English", "Afrikaans"],
+    location: "Кейптаун, ЮАР",
+    languages: ["Английский", "Африкаанс"],
     supportedServices: ["ocean_fcl", "reefer", "origin_handling"],
     cargoCapabilityTags: ["reefer", "temperature_controlled", "pharma"],
     issueFlags: []
@@ -170,11 +170,11 @@ export const agentsSeed: Agent[] = [
     externalKey: "ZA-UMKHONTO",
     companyName: "Umkhonto Marine Services",
     status: "active",
-    location: "Durban, South Africa",
-    languages: ["English", "Zulu"],
+    location: "Дурбан, ЮАР",
+    languages: ["Английский", "Зулу"],
     supportedServices: ["ocean_fcl", "origin_handling"],
     cargoCapabilityTags: ["automotive", "industrial", "dry_cargo"],
-    issueFlags: ["recent incomplete surcharge"]
+    issueFlags: ["недавно неполный сбор"]
   }
 ];
 
@@ -257,36 +257,36 @@ export const scenariosSeed: RFQScenario[] = [
     id: "scenario-cl-001",
     tenantId: DEMO_TENANT_ID,
     scenarioKey: "CL-001",
-    title: "Hero Chile coffee RFQ",
+    title: "Ключевой RFQ по кофе из Чили",
     routeLabel: "Valparaiso -> Gdansk",
-    purpose: ["Email extraction", "Chile agent matching", "Partial comparison", "Late Excel rate", "Quote v2 decision"],
+    purpose: ["Извлечение из письма", "Подбор агентов в Чили", "Частичное сравнение", "Поздняя Excel-ставка", "Решение по Quote v2"],
     initialStatus: "collecting"
   },
   {
     id: "scenario-cn-001",
     tenantId: DEMO_TENANT_ID,
     scenarioKey: "CN-001",
-    title: "Chat conflict scenario",
+    title: "Сценарий конфликта в чате",
     routeLabel: "Ningbo -> Hamburg",
-    purpose: ["Latest-message resolution", "Conflict detection", "China agent matching"],
+    purpose: ["Разрешение по последнему сообщению", "Обнаружение конфликта", "Подбор агентов в Китае"],
     initialStatus: "clarification_required"
   },
   {
     id: "scenario-za-001",
     tenantId: DEMO_TENANT_ID,
     scenarioKey: "ZA-001",
-    title: "Quick capture scenario",
+    title: "Сценарий быстрого захвата",
     routeLabel: "Durban -> Constanta",
-    purpose: ["Call-note capture", "Missing-field detection", "South Africa matching"],
+    purpose: ["Захват заметок звонка", "Поиск недостающих полей", "Подбор агентов в ЮАР"],
     initialStatus: "ready_for_routing"
   },
   {
     id: "scenario-za-002",
     tenantId: DEMO_TENANT_ID,
     scenarioKey: "ZA-002",
-    title: "Manual Review scenario",
+    title: "Сценарий ручной проверки",
     routeLabel: "Cape Town -> Gdansk",
-    purpose: ["Manual Review triggers", "Risk retention", "Manager override"],
+    purpose: ["Триггеры ручной проверки", "Сохранение рисков", "Решение менеджера"],
     initialStatus: "manual_review"
   }
 ];
@@ -298,7 +298,7 @@ export const inputsSeed: RFQInput[] = [
     scenarioId: "scenario-cl-001",
     sourceType: "email",
     rawText:
-      "Subject: Ocean quote request - Valparaiso to Gdansk\n\nPlease quote 2 x 40HC from Valparaiso, Chile to Gdansk, Poland. Cargo is green coffee beans, FOB. Cargo expected next week. Please include origin charges and advise free days."
+      "Тема: Запрос морской ставки - Valparaiso to Gdansk\n\nПожалуйста, рассчитайте 2 x 40HC из Valparaiso, Chile в Gdansk, Poland. Груз - зеленые кофейные зерна, FOB. Груз ожидается на следующей неделе. Включите сборы отправления и укажите свободные дни."
   },
   {
     id: "input-cn-001",
@@ -306,7 +306,7 @@ export const inputsSeed: RFQInput[] = [
     scenarioId: "scenario-cn-001",
     sourceType: "conversation",
     rawText:
-      "09:12 Customer: Need Ningbo to Hamburg for 1 x 40HC electronics.\n09:18 Desk: Please confirm quantity and ready date.\n09:24 Customer: Please revise to 2 x 40HC. Ready date still not fixed.\n09:37 Customer: Incoterms are FOB Ningbo."
+      "09:12 Клиент: Нужно Ningbo - Hamburg для 1 x 40HC, электроника.\n09:18 Деск: Подтвердите количество и дату готовности.\n09:24 Клиент: Пожалуйста, измените на 2 x 40HC. Дата готовности пока не фиксирована.\n09:37 Клиент: Incoterms - FOB Ningbo."
   },
   {
     id: "input-za-001",
@@ -314,7 +314,7 @@ export const inputsSeed: RFQInput[] = [
     scenarioId: "scenario-za-001",
     sourceType: "call_notes",
     rawText:
-      "Customer called: 2 x 20DC from Durban to Constanta. FOB. Automotive spare parts. Cargo expected next month. Need freight indication by Friday."
+      "Звонок клиента: 2 x 20DC из Durban в Constanta. FOB. Автозапчасти. Груз ожидается в следующем месяце. Нужна индикативная ставка до пятницы."
   },
   {
     id: "input-za-002",
@@ -322,7 +322,7 @@ export const inputsSeed: RFQInput[] = [
     scenarioId: "scenario-za-002",
     sourceType: "email",
     rawText:
-      "Please quote Cape Town to Gdansk for temperature-controlled products. We do not yet have temperature range, ventilation requirements, cargo classification, or cargo-ready date."
+      "Пожалуйста, рассчитайте Cape Town to Gdansk для температурного груза. У нас пока нет температурного диапазона, требований к вентиляции, классификации груза и даты готовности."
   }
 ];
 
@@ -343,22 +343,22 @@ export const casesSeed: RFQCase[] = [
     destinationPort: "Gdansk",
     containerType: "40HC",
     containerQuantity: 2,
-    cargoDescription: "Green coffee beans",
-    packaging: "Bags on pallets",
+    cargoDescription: "Зеленые кофейные зерна",
+    packaging: "Мешки на паллетах",
     grossWeight: null,
     volume: null,
     incoterms: "FOB",
-    serviceScope: "Origin handling and ocean FCL",
-    cargoReadyInfo: "Expected next week",
+    serviceScope: "Обработка в порту отправления и морской FCL",
+    cargoReadyInfo: "Ожидается на следующей неделе",
     cargoReadyDate: null,
-    quotationDeadline: "Today 16:00",
-    responseCutoff: "Today 14:45",
-    specialRequirements: "Confirm free days and major charges",
+    quotationDeadline: "Сегодня 16:00",
+    responseCutoff: "Сегодня 14:45",
+    specialRequirements: "Подтвердить свободные дни и основные сборы",
     cargoFlags: [],
     riskFlags: ["cargo_ready_date_missing"],
     manualReviewReason: null,
     clarificationDraft:
-      "Please confirm cargo-ready date, gross weight per container, and whether any fumigation or food-grade documentation is required.",
+      "Пожалуйста, подтвердите дату готовности груза, вес брутто на контейнер и нужна ли фумигация или документация для пищевого груза.",
     selectedRateOptionId: null
   },
   {
@@ -377,22 +377,22 @@ export const casesSeed: RFQCase[] = [
     destinationPort: "Hamburg",
     containerType: "40HC",
     containerQuantity: 2,
-    cargoDescription: "Electronics",
+    cargoDescription: "Электроника",
     packaging: null,
     grossWeight: null,
     volume: null,
     incoterms: "FOB",
-    serviceScope: "Origin handling and ocean FCL",
-    cargoReadyInfo: "Not fixed",
+    serviceScope: "Обработка в порту отправления и морской FCL",
+    cargoReadyInfo: "Не фиксирована",
     cargoReadyDate: null,
-    quotationDeadline: "Tomorrow",
-    responseCutoff: "Tomorrow 12:00",
+    quotationDeadline: "Завтра",
+    responseCutoff: "Завтра 12:00",
     specialRequirements: null,
     cargoFlags: [],
     riskFlags: ["cargo_ready_date_missing", "weight_missing"],
     manualReviewReason: null,
     clarificationDraft:
-      "Please confirm cargo-ready date, gross weight, packaging, and whether the electronics require humidity-control handling.",
+      "Пожалуйста, подтвердите дату готовности груза, вес брутто, упаковку и требуется ли контроль влажности для электроники.",
     selectedRateOptionId: null
   },
   {
@@ -411,22 +411,22 @@ export const casesSeed: RFQCase[] = [
     destinationPort: "Constanta",
     containerType: "20DC",
     containerQuantity: 2,
-    cargoDescription: "Automotive spare parts",
+    cargoDescription: "Автозапчасти",
     packaging: null,
     grossWeight: null,
     volume: null,
     incoterms: "FOB",
-    serviceScope: "Origin handling and ocean FCL",
-    cargoReadyInfo: "Expected next month",
+    serviceScope: "Обработка в порту отправления и морской FCL",
+    cargoReadyInfo: "Ожидается в следующем месяце",
     cargoReadyDate: null,
-    quotationDeadline: "Friday",
-    responseCutoff: "Thursday 16:00",
+    quotationDeadline: "Пятница",
+    responseCutoff: "Четверг 16:00",
     specialRequirements: null,
     cargoFlags: [],
     riskFlags: ["exact_ready_date_missing", "weight_missing"],
     manualReviewReason: null,
     clarificationDraft:
-      "Please confirm exact cargo-ready date, gross weight, packing type, and whether stackability restrictions apply.",
+      "Пожалуйста, подтвердите точную дату готовности груза, вес брутто, тип упаковки и наличие ограничений по штабелированию.",
     selectedRateOptionId: null
   },
   {
@@ -445,7 +445,7 @@ export const casesSeed: RFQCase[] = [
     destinationPort: "Gdansk",
     containerType: null,
     containerQuantity: null,
-    cargoDescription: "Temperature-controlled products",
+    cargoDescription: "Температурный груз",
     packaging: null,
     grossWeight: null,
     volume: null,
@@ -453,9 +453,9 @@ export const casesSeed: RFQCase[] = [
     serviceScope: null,
     cargoReadyInfo: null,
     cargoReadyDate: null,
-    quotationDeadline: "Pending",
-    responseCutoff: "Pending",
-    specialRequirements: "Temperature-controlled cargo",
+    quotationDeadline: "Ожидает уточнения",
+    responseCutoff: "Ожидает уточнения",
+    specialRequirements: "Температурный груз",
     cargoFlags: ["temperature_controlled", "reefer"],
     riskFlags: [
       "temperature_range_missing",
@@ -465,9 +465,9 @@ export const casesSeed: RFQCase[] = [
       "cargo_ready_date_missing"
     ],
     manualReviewReason:
-      "This RFQ requires operational validation before agent requests can be sent.",
+      "Этот RFQ требует операционной проверки перед отправкой запросов агентам.",
     clarificationDraft:
-      "Please confirm required temperature range, reefer container type, ventilation requirements, cargo classification, cargo-ready date, and Incoterms.",
+      "Пожалуйста, подтвердите температурный диапазон, тип рефконтейнера, требования к вентиляции, классификацию груза, дату готовности и Incoterms.",
     selectedRateOptionId: null
   }
 ];
@@ -493,30 +493,30 @@ const field = (
 });
 
 export const fieldAssertionsSeed: RFQFieldAssertion[] = [
-  field("case-cl-001", 1, "origin_port", "Valparaiso", "Confirmed", "High", "from Valparaiso, Chile"),
-  field("case-cl-001", 2, "destination_port", "Gdansk", "Confirmed", "High", "to Gdansk, Poland"),
+  field("case-cl-001", 1, "origin_port", "Valparaiso", "Confirmed", "High", "из Valparaiso, Chile"),
+  field("case-cl-001", 2, "destination_port", "Gdansk", "Confirmed", "High", "в Gdansk, Poland"),
   field("case-cl-001", 3, "container_quantity", "2", "Confirmed", "High", "2 x 40HC"),
   field("case-cl-001", 4, "container_type", "40HC", "Confirmed", "High", "2 x 40HC"),
-  field("case-cl-001", 5, "cargo_description", "Green coffee beans", "Confirmed", "High", "Cargo is green coffee beans"),
+  field("case-cl-001", 5, "cargo_description", "Зеленые кофейные зерна", "Confirmed", "High", "Груз - зеленые кофейные зерна"),
   field("case-cl-001", 6, "incoterms", "FOB", "Confirmed", "High", "FOB"),
-  field("case-cl-001", 7, "cargo_ready_date", null, "Needs confirmation", "Medium", "Cargo expected next week"),
-  field("case-cl-001", 8, "gross_weight", null, "Missing", "Low", "No weight found in source email"),
-  field("case-cn-001", 1, "container_quantity", "1", "Needs confirmation", "Medium", "09:12 Customer: 1 x 40HC"),
-  field("case-cn-001", 2, "container_quantity", "2", "Confirmed", "High", "09:24 Customer: Please revise to 2 x 40HC"),
-  field("case-cn-001", 3, "origin_port", "Ningbo", "Confirmed", "High", "Need Ningbo to Hamburg"),
-  field("case-cn-001", 4, "destination_port", "Hamburg", "Confirmed", "High", "Need Ningbo to Hamburg"),
-  field("case-cn-001", 5, "cargo_ready_date", null, "Missing", "High", "Ready date still not fixed"),
-  field("case-cn-001", 6, "gross_weight", null, "Missing", "Low", "No weight found in chat"),
-  field("case-za-001", 1, "origin_port", "Durban", "Confirmed", "High", "from Durban"),
-  field("case-za-001", 2, "destination_port", "Constanta", "Confirmed", "High", "to Constanta"),
+  field("case-cl-001", 7, "cargo_ready_date", null, "Needs confirmation", "Medium", "Груз ожидается на следующей неделе"),
+  field("case-cl-001", 8, "gross_weight", null, "Missing", "Low", "Вес в исходном письме не найден"),
+  field("case-cn-001", 1, "container_quantity", "1", "Needs confirmation", "Medium", "09:12 Клиент: 1 x 40HC"),
+  field("case-cn-001", 2, "container_quantity", "2", "Confirmed", "High", "09:24 Клиент: Пожалуйста, измените на 2 x 40HC"),
+  field("case-cn-001", 3, "origin_port", "Ningbo", "Confirmed", "High", "Нужно Ningbo - Hamburg"),
+  field("case-cn-001", 4, "destination_port", "Hamburg", "Confirmed", "High", "Нужно Ningbo - Hamburg"),
+  field("case-cn-001", 5, "cargo_ready_date", null, "Missing", "High", "Дата готовности пока не фиксирована"),
+  field("case-cn-001", 6, "gross_weight", null, "Missing", "Low", "Вес в чате не найден"),
+  field("case-za-001", 1, "origin_port", "Durban", "Confirmed", "High", "из Durban"),
+  field("case-za-001", 2, "destination_port", "Constanta", "Confirmed", "High", "в Constanta"),
   field("case-za-001", 3, "container_quantity", "2", "Confirmed", "High", "2 x 20DC"),
   field("case-za-001", 4, "container_type", "20DC", "Confirmed", "High", "2 x 20DC"),
-  field("case-za-001", 5, "cargo_ready_date", null, "Needs confirmation", "Medium", "expected next month"),
-  field("case-za-002", 1, "cargo_description", "Temperature-controlled products", "Confirmed", "High", "temperature-controlled products"),
-  field("case-za-002", 2, "temperature_range", null, "Missing", "High", "We do not yet have temperature range"),
-  field("case-za-002", 3, "reefer_container_type", null, "Missing", "High", "No reefer container type provided"),
-  field("case-za-002", 4, "ventilation_requirements", null, "Missing", "High", "ventilation requirements not available"),
-  field("case-za-002", 5, "incoterms", null, "Missing", "Medium", "No Incoterm found")
+  field("case-za-001", 5, "cargo_ready_date", null, "Needs confirmation", "Medium", "ожидается в следующем месяце"),
+  field("case-za-002", 1, "cargo_description", "Температурный груз", "Confirmed", "High", "температурный груз"),
+  field("case-za-002", 2, "temperature_range", null, "Missing", "High", "Температурный диапазон пока отсутствует"),
+  field("case-za-002", 3, "reefer_container_type", null, "Missing", "High", "Тип рефконтейнера не указан"),
+  field("case-za-002", 4, "ventilation_requirements", null, "Missing", "High", "Требования к вентиляции отсутствуют"),
+  field("case-za-002", 5, "incoterms", null, "Missing", "Medium", "Incoterm не найден")
 ];
 
 export const roundsSeed: RFQRound[] = [
@@ -525,7 +525,7 @@ export const roundsSeed: RFQRound[] = [
     tenantId: DEMO_TENANT_ID,
     caseId: "case-cl-001",
     status: "enough_responses",
-    responseCutoff: "Today 14:45",
+    responseCutoff: "Сегодня 14:45",
     selectedAgentIds: ["agent-andes-link", "agent-pacific-axis", "agent-southern-gate"]
   }
 ];
@@ -583,7 +583,7 @@ export const replyPlansSeed: ReplyPlan[] = [
     delaySeconds: 10,
     sourceType: "structured_email",
     attachmentId: null,
-    rawSourceReference: "Structured email reply with all major charges disclosed",
+    rawSourceReference: "Структурированный ответ письмом со всеми основными сборами",
     behavior: "complete_comparable",
     statusAfterProcessing: "Rate received"
   },
@@ -596,7 +596,7 @@ export const replyPlansSeed: ReplyPlan[] = [
     delaySeconds: 25,
     sourceType: "messy_text",
     attachmentId: null,
-    rawSourceReference: "Messy free-text reply missing validity and destination charges",
+    rawSourceReference: "Неструктурированный текстовый ответ без срока действия и сборов назначения",
     behavior: "incomplete_follow_up",
     statusAfterProcessing: "Incomplete rate"
   },
@@ -609,7 +609,7 @@ export const replyPlansSeed: ReplyPlan[] = [
     delaySeconds: 75,
     sourceType: "xlsx",
     attachmentId: "attachment-cl-southern-xlsx",
-    rawSourceReference: "Synthetic Excel rate sheet",
+    rawSourceReference: "Синтетический Excel-файл со ставкой",
     behavior: "late_after_quote_v1",
     statusAfterProcessing: "Late response"
   }
@@ -623,7 +623,7 @@ export const rateRepliesSeed: RateReply[] = [
     agentId: "agent-andes-link",
     sourceType: "structured_email",
     rawText:
-      "Andes Link Freight quote: Maersk, Valparaiso to Gdansk, 2 x 40HC. Ocean freight USD 3900 total, origin charges USD 420, documentation USD 90, destination charges USD 240. Transit 38 days. Valid until 2026-07-15. 14 free days.",
+      "Andes Link Freight: Maersk, Valparaiso to Gdansk, 2 x 40HC. Морской фрахт USD 3900 всего, сборы отправления USD 420, документация USD 90, сборы назначения USD 240. Транзит 38 дн. Действует до 2026-07-15. 14 свободных дней.",
     processingResult: "validated",
     attachmentId: null,
     receivedAt
@@ -635,7 +635,7 @@ export const rateRepliesSeed: RateReply[] = [
     agentId: "agent-pacific-axis",
     sourceType: "messy_text",
     rawText:
-      "Can do VALP-GDN coffee 2x40HC, freight maybe 3.75k all in ocean side, MSC, 44 days, local charges to follow, validity not sure.",
+      "Можем VALP-GDN кофе 2x40HC, фрахт примерно 3.75k по морской части, MSC, 44 дня, локальные сборы позже, срок действия не уверен.",
     processingResult: "needs_follow_up",
     attachmentId: null,
     receivedAt: new Date("2026-06-28T09:58:00.000Z")
@@ -661,14 +661,14 @@ export const initialRateOptionsSeed: RateOption[] = [
     route: "Valparaiso -> Gdansk",
     validityDate: "2026-07-15",
     freeDays: 14,
-    inclusions: ["Ocean freight", "Origin charges", "Documentation", "Destination handling"],
-    exclusions: ["Customs duties", "Demurrage after free days"],
-    conditions: ["Subject to equipment availability", "Coffee cargo declared as non-DG"],
+    inclusions: ["Морской фрахт", "Сборы в порту отправления", "Документация", "Обработка в порту назначения"],
+    exclusions: ["Таможенные пошлины", "Демередж после свободных дней"],
+    conditions: ["При условии наличия оборудования", "Кофейный груз заявлен как не-DG"],
     knownTotal: 4650,
     completenessScore: 96,
     reviewRequired: false,
     status: "Recommended",
-    sourceEvidence: "Major charges, validity, free days and transit time disclosed in structured email."
+    sourceEvidence: "Основные сборы, срок действия, свободные дни и транзитное время раскрыты в структурированном письме."
   },
   {
     id: "rate-cl-pacific",
@@ -688,14 +688,14 @@ export const initialRateOptionsSeed: RateOption[] = [
     route: "Valparaiso -> Gdansk",
     validityDate: "Missing",
     freeDays: 7,
-    inclusions: ["Ocean freight only"],
-    exclusions: ["Origin charges not disclosed", "Destination charges not disclosed", "Validity missing"],
-    conditions: ["Follow-up required before customer quote"],
+    inclusions: ["Только морской фрахт"],
+    exclusions: ["Сборы отправления не раскрыты", "Сборы назначения не раскрыты", "Срок действия отсутствует"],
+    conditions: ["Нужен дополнительный запрос перед клиентской котировкой"],
     knownTotal: 3750,
     completenessScore: 54,
     reviewRequired: true,
     status: "Incomplete",
-    sourceEvidence: "Reply says local charges to follow and validity not sure."
+    sourceEvidence: "В ответе сказано, что локальные сборы будут позже, а срок действия не подтвержден."
   }
 ];
 
@@ -705,7 +705,7 @@ export const southernGateLateReply: RateReply = {
   caseId: "case-cl-001",
   agentId: "agent-southern-gate",
   sourceType: "xlsx",
-  rawText: "Loaded from synthetic Excel fixture: southern-gate-late-rate.xlsx",
+  rawText: "Загружено из синтетической Excel-фикстуры: southern-gate-late-rate.xlsx",
   processingResult: "validated",
   attachmentId: "attachment-cl-southern-xlsx",
   receivedAt: new Date("2026-06-28T10:16:00.000Z")
@@ -729,14 +729,14 @@ export const southernGateLateRate: RateOption = {
   route: "Valparaiso -> Gdansk",
   validityDate: "2026-07-18",
   freeDays: 10,
-  inclusions: ["Ocean freight", "Origin charges", "Documentation", "Destination handling"],
-  exclusions: ["Customs duties", "Demurrage after free days"],
-  conditions: ["Subject to vessel space confirmation", "Late rate received after Quote v1"],
+  inclusions: ["Морской фрахт", "Сборы в порту отправления", "Документация", "Обработка в порту назначения"],
+  exclusions: ["Таможенные пошлины", "Демередж после свободных дней"],
+  conditions: ["При условии подтверждения места на судне", "Поздняя ставка получена после Quote v1"],
   knownTotal: 4330,
   completenessScore: 91,
   reviewRequired: false,
   status: "Late response",
-  sourceEvidence: "Synthetic Excel sheet disclosed freight, local charges, validity and free days."
+  sourceEvidence: "Синтетический Excel-файл раскрыл фрахт, локальные сборы, срок действия и свободные дни."
 };
 
 export const activityEventsSeed = [
@@ -745,8 +745,8 @@ export const activityEventsSeed = [
     tenantId: DEMO_TENANT_ID,
     caseId: "case-cl-001",
     eventType: "input_received",
-    title: "Customer email parsed",
-    body: "FreightPilot extracted lane, container count, cargo and Incoterm from the email.",
+    title: "Письмо клиента разобрано",
+    body: "FreightPilot извлек маршрут, количество контейнеров, груз и Incoterm из письма.",
     createdAt: new Date("2026-06-28T08:45:00.000Z")
   },
   {
@@ -754,8 +754,8 @@ export const activityEventsSeed = [
     tenantId: DEMO_TENANT_ID,
     caseId: "case-cl-001",
     eventType: "clarification",
-    title: "Clarification drafted",
-    body: "Cargo-ready date and gross weight remain unresolved, but RFQ can proceed with manager oversight.",
+    title: "Черновик уточнения подготовлен",
+    body: "Дата готовности груза и вес брутто остаются неуточненными, но RFQ может продолжаться под контролем менеджера.",
     createdAt: new Date("2026-06-28T08:47:00.000Z")
   },
   {
@@ -763,8 +763,8 @@ export const activityEventsSeed = [
     tenantId: DEMO_TENANT_ID,
     caseId: "case-cl-001",
     eventType: "approval",
-    title: "RFQ round approved",
-    body: "Manager selected Andes Link Freight, Pacific Axis Logistics and Southern Gate Forwarding.",
+    title: "RFQ-раунд согласован",
+    body: "Менеджер выбрал Andes Link Freight, Pacific Axis Logistics и Southern Gate Forwarding.",
     createdAt: new Date("2026-06-28T09:00:00.000Z")
   },
   {
@@ -772,8 +772,8 @@ export const activityEventsSeed = [
     tenantId: DEMO_TENANT_ID,
     caseId: "case-cl-001",
     eventType: "rate_received",
-    title: "Complete rate received",
-    body: "Andes Link Freight returned a comparable structured email rate after 10 simulated seconds.",
+    title: "Получена полная ставка",
+    body: "Andes Link Freight вернул сопоставимую структурированную ставку письмом через 10 имитированных секунд.",
     createdAt: new Date("2026-06-28T09:40:00.000Z")
   },
   {
@@ -781,8 +781,8 @@ export const activityEventsSeed = [
     tenantId: DEMO_TENANT_ID,
     caseId: "case-cl-001",
     eventType: "rate_incomplete",
-    title: "Incomplete rate received",
-    body: "Pacific Axis reply lacks validity and destination charges. Follow-up is required.",
+    title: "Получена неполная ставка",
+    body: "В ответе Pacific Axis нет срока действия и сборов назначения. Требуется дополнительный запрос.",
     createdAt: new Date("2026-06-28T09:58:00.000Z")
   },
   {
@@ -790,8 +790,8 @@ export const activityEventsSeed = [
     tenantId: DEMO_TENANT_ID,
     caseId: "case-cn-001",
     eventType: "chat_resolution",
-    title: "Latest explicit quantity selected",
-    body: "The customer revised quantity from 1 x 40HC to 2 x 40HC in a later message. Ready date remains missing.",
+    title: "Выбрано последнее явное количество",
+    body: "Клиент изменил количество с 1 x 40HC на 2 x 40HC в более позднем сообщении. Дата готовности все еще отсутствует.",
     createdAt: new Date("2026-06-28T08:30:00.000Z")
   },
   {
@@ -799,8 +799,8 @@ export const activityEventsSeed = [
     tenantId: DEMO_TENANT_ID,
     caseId: "case-za-001",
     eventType: "quick_capture",
-    title: "Call notes converted to RFQ",
-    body: "Core lane and cargo fields are available. Exact ready date and weight need confirmation.",
+    title: "Заметки звонка превращены в RFQ",
+    body: "Базовые поля маршрута и груза доступны. Точная дата готовности и вес требуют подтверждения.",
     createdAt: new Date("2026-06-28T08:15:00.000Z")
   },
   {
@@ -808,14 +808,14 @@ export const activityEventsSeed = [
     tenantId: DEMO_TENANT_ID,
     caseId: "case-za-002",
     eventType: "manual_review",
-    title: "Manual review required",
-    body: "Temperature-controlled cargo lacks temperature range, reefer type, ventilation requirements and cargo-ready date.",
+    title: "Требуется ручная проверка",
+    body: "Для температурного груза отсутствуют температурный диапазон, тип рефконтейнера, требования к вентиляции и дата готовности.",
     createdAt: new Date("2026-06-28T08:10:00.000Z")
   }
 ];
 
 export const demoSeed: DemoSeed = {
-  tenant: { id: DEMO_TENANT_ID, name: "FreightPilot Demo Tenant" },
+  tenant: { id: DEMO_TENANT_ID, name: "Демо-тенант FreightPilot" },
   agents: agentsSeed,
   coverages: coveragesSeed,
   metrics: metricsSeed,

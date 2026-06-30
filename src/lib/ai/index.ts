@@ -5,8 +5,8 @@ import { LMStudioAIService } from "./lmstudio-ai";
 export function createAIService(provider = (process.env.AI_PROVIDER ?? "fixture") as AIProviderName): AIService {
   if (provider === "lmstudio") return new LMStudioAIService();
 
-  // Hosted providers are intentionally routed through fixture mode until keys,
-  // prompts and cost limits are configured for Live Proof.
+  // Hosted-провайдеры намеренно идут через режим фикстуры, пока не настроены
+  // ключи, промпты и лимиты стоимости для проверки AI.
   return new FixtureAIService();
 }
 

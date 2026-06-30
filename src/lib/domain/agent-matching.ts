@@ -44,15 +44,15 @@ function supportsCargo(agent: Agent, rfqCase: RFQCase) {
     );
   }
 
-  if (rfqCase.cargoDescription?.toLowerCase().includes("coffee")) {
+  if (rfqCase.cargoDescription?.toLowerCase().includes("coffee") || rfqCase.cargoDescription?.toLowerCase().includes("кофе")) {
     return agent.cargoCapabilityTags.includes("coffee") || agent.cargoCapabilityTags.includes("agricultural");
   }
 
-  if (rfqCase.cargoDescription?.toLowerCase().includes("automotive")) {
+  if (rfqCase.cargoDescription?.toLowerCase().includes("automotive") || rfqCase.cargoDescription?.toLowerCase().includes("авто")) {
     return agent.cargoCapabilityTags.includes("automotive") || agent.cargoCapabilityTags.includes("industrial");
   }
 
-  if (rfqCase.cargoDescription?.toLowerCase().includes("electronics")) {
+  if (rfqCase.cargoDescription?.toLowerCase().includes("electronics") || rfqCase.cargoDescription?.toLowerCase().includes("электрон")) {
     return agent.cargoCapabilityTags.includes("electronics") || agent.cargoCapabilityTags.includes("general_cargo");
   }
 
@@ -94,16 +94,16 @@ export function matchAgents(input: {
       if (!supportsCargo(agent, rfqCase)) return [];
 
       const factors: MatchFactor[] = [
-        { label: "Coverage match", points: 40 },
-        { label: "Service and cargo capability", points: 20 },
-        { label: `Median response ${metric.medianResponseMinutes} min`, points: speedPoints(metric.medianResponseMinutes) },
-        { label: `Complete-rate history ${metric.quoteCompletenessRate}%`, points: completenessPoints(metric.quoteCompletenessRate) },
-        { label: `Observed sample ${metric.sampleSize} RFQs`, points: metric.sampleSize >= 20 ? 5 : 2 },
-        { label: `Selected by managers ${metric.managerSelectedCount} times`, points: metric.managerSelectedCount >= 10 ? 5 : 2 }
+        { label: "Совпадение покрытия", points: 40 },
+        { label: "Сервис и грузовая специализация", points: 20 },
+        { label: `Медиана ответа ${metric.medianResponseMinutes} мин`, points: speedPoints(metric.medianResponseMinutes) },
+        { label: `История полных ставок ${metric.quoteCompletenessRate}%`, points: completenessPoints(metric.quoteCompletenessRate) },
+        { label: `Наблюдаемая выборка ${metric.sampleSize} RFQ`, points: metric.sampleSize >= 20 ? 5 : 2 },
+        { label: `Выбран менеджерами ${metric.managerSelectedCount} раз`, points: metric.managerSelectedCount >= 10 ? 5 : 2 }
       ];
 
       if (agent.issueFlags.length > 0) {
-        factors.push({ label: `Recent issue flags: ${agent.issueFlags.join(", ")}`, points: -20 });
+        factors.push({ label: `Недавние флаги проблем: ${agent.issueFlags.join(", ")}`, points: -20 });
       }
 
       const score = factors.reduce((sum, factor) => sum + factor.points, 0);

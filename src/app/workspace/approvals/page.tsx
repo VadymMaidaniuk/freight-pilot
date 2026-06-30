@@ -5,6 +5,7 @@ import { CaseStatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Panel, PanelBody, PanelHeader } from "@/components/ui/panel";
 import { matchAgents } from "@/lib/domain/agent-matching";
+import { sourceTypeLabel } from "@/lib/labels";
 import { loadCaseSnapshot, loadWorkspaceSummary } from "@/lib/repositories/workspace-repository";
 
 export const dynamic = "force-dynamic";
@@ -17,17 +18,17 @@ export default async function ApprovalsPage() {
   return (
     <div className="space-y-6 pb-20 md:pb-0">
       <div>
-        <p className="text-label-caps uppercase tracking-wide text-primary">Manager approvals</p>
-        <h1 className="mt-1 text-display-lg font-semibold text-ink-text">Approvals</h1>
+        <p className="text-label-caps uppercase tracking-wide text-primary">Согласования менеджера</p>
+        <h1 className="mt-1 text-display-lg font-semibold text-ink-text">Согласования</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-text">
-          Review RFQ drafts and calculated shortlists before simulating agent sends.
+          Проверьте черновики RFQ и рассчитанные короткие списки перед имитацией отправки агентам.
         </p>
       </div>
 
       <div className="grid gap-4">
         {snapshots.length === 0 ? (
           <Panel>
-            <PanelBody>No RFQ drafts are waiting for approval.</PanelBody>
+            <PanelBody>Нет RFQ-черновиков, ожидающих согласования.</PanelBody>
           </Panel>
         ) : (
           snapshots.map((snapshot) => {
@@ -43,14 +44,14 @@ export default async function ApprovalsPage() {
               <Panel key={snapshot.case.id}>
                 <PanelHeader
                   title={`${snapshot.case.requestNumber} · ${snapshot.case.originCity} -> ${snapshot.case.destinationCity}`}
-                  eyebrow={snapshot.input.sourceType.replace("_", " ")}
+                  eyebrow={sourceTypeLabel(snapshot.input.sourceType)}
                   actions={<CaseStatusBadge status={snapshot.case.status} />}
                 />
                 <PanelBody className="grid gap-5 lg:grid-cols-[1fr_1fr_auto] lg:items-start">
                   <div>
                     <p className="text-sm leading-6 text-muted-text">{snapshot.case.clarificationDraft}</p>
                     <Link href={`/workspace/cases/${snapshot.case.id}`} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                      Review full case
+                      Открыть полный кейс
                       <ArrowRight className="h-4 w-4" aria-hidden />
                     </Link>
                   </div>
@@ -62,7 +63,7 @@ export default async function ApprovalsPage() {
                           <span className="font-mono text-sm text-primary">{match.score}</span>
                         </div>
                         <p className="mt-1 text-xs text-muted-text">
-                          {match.coverage[0]?.port}, response {match.metric.responseRate}%, complete {match.metric.quoteCompletenessRate}%.
+                          {match.coverage[0]?.port}, ответы {match.metric.responseRate}%, полнота {match.metric.quoteCompletenessRate}%.
                         </p>
                       </div>
                     ))}
@@ -70,7 +71,7 @@ export default async function ApprovalsPage() {
                   {snapshot.case.status === "manual_review" ? (
                     <form action={overrideManualReviewAction}>
                       <input type="hidden" name="caseId" value={snapshot.case.id} />
-                      <Button variant="secondary">Override review</Button>
+                      <Button variant="secondary">Снять ручную проверку</Button>
                     </form>
                   ) : (
                     <form action={approveRoutingAction} className="space-y-2">
@@ -80,7 +81,7 @@ export default async function ApprovalsPage() {
                       ))}
                       <Button>
                         <CheckCircle2 className="h-4 w-4" aria-hidden />
-                        Approve & simulate sending
+                        Согласовать и имитировать отправку
                       </Button>
                     </form>
                   )}
