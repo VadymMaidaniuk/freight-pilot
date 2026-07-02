@@ -16,6 +16,20 @@ type ValidationIssue = {
   message?: string;
 };
 
+export type ResponseFormatMode = "json_schema" | "json_object" | "none";
+
+export type ProviderRoutingPreferences = {
+  order?: string[];
+  only?: string[];
+  ignore?: string[];
+  allow_fallbacks?: boolean;
+  require_parameters?: boolean;
+  data_collection?: "allow" | "deny";
+  sort?: "price" | "throughput" | "latency";
+};
+
+type RequestHeaders = Record<string, string>;
+
 const nullableString = { type: ["string", "null"] };
 
 const rfqExtractionJsonSchema = {
@@ -218,8 +232,13 @@ export class LMStudioAIService implements AIService {
     private readonly maxTokens = Number(process.env.LMSTUDIO_MAX_TOKENS ?? 1800),
     private readonly temperature = Number(process.env.LMSTUDIO_TEMPERATURE ?? 0),
     private readonly topP = Number(process.env.LMSTUDIO_TOP_P ?? 0.1),
-    private readonly structuredOutput = process.env.LMSTUDIO_STRUCTURED_OUTPUT !== "false",
-    private readonly reasoningEffort = process.env.LMSTUDIO_REASONING_EFFORT
+    structuredOutput = process.env.LMSTUDIO_STRUCTURED_OUTPUT !== "false",
+    private readonly reasoningEffort = process.env.LMSTUDIO_REASONING_EFFORT,
+    private readonly responseFormatMode: ResponseFormatMode = structuredOutput ? "json_schema" : "none",
+    private readonly serviceName = "LM Studio",
+    private readonly apiKey?: string,
+    private readonly extraHeaders: RequestHeaders = {},
+    private readonly providerPreferences?: ProviderRoutingPreferences
   ) {}
 
   async extractRFQ(input: { sourceType: SourceType; rawText: string }): Promise<RFQExtraction> {
@@ -310,39 +329,41 @@ export class LMStudioAIService implements AIService {
   }
 
   private async completeText(prompt: string) {
+    const requestBody: Record<string, unknown> = {
+      model: this.model,
+      temperature: this.temperature,
+      top_p: this.topP,
+      max_tokens: this.maxTokens,
+      stream: false,
+      messages: [
+        {
+          role: "system",
+          content: "Ты ассистент freight forwarding quote desk. Возвращай только финальный рабочий текст без рассуждений."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ]
+    };
+
+    this.applyProviderPreferences(requestBody);
+
     const response = await fetch(`${this.baseUrl.replace(/\/$/, "")}/chat/completions`, {
       method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify({
-        model: this.model,
-        temperature: this.temperature,
-        top_p: this.topP,
-        max_tokens: this.maxTokens,
-        stream: false,
-        messages: [
-          {
-            role: "system",
-            content: "Ты ассистент freight forwarding quote desk. Возвращай только финальный рабочий текст без рассуждений."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ]
-      }),
+      headers: this.getRequestHeaders(),
+      body: JSON.stringify(requestBody),
       signal: AbortSignal.timeout(this.timeoutMs)
     });
 
     if (!response.ok) {
       const errorBody = await response.text().catch(() => "");
-      throw new Error(`Запрос к LM Studio завершился ошибкой: ${response.status}${errorBody ? ` ${errorBody.slice(0, 700)}` : ""}`);
+      throw new Error(`Запрос к ${this.serviceName} завершился ошибкой: ${response.status}${errorBody ? ` ${errorBody.slice(0, 700)}` : ""}`);
     }
 
     const payload = (await response.json()) as ChatCompletionResponse;
     const content = payload.choices?.[0]?.message?.content?.trim();
-    if (!content) throw new Error("LM Studio вернула пустой ответ");
+    if (!content) throw new Error(`${this.serviceName} вернул пустой ответ`);
 
     return content.replace(/```(?:text)?\s*([\s\S]*?)```/i, "$1").trim();
   }
@@ -372,7 +393,7 @@ export class LMStudioAIService implements AIService {
       ]
     };
 
-    if (this.structuredOutput) {
+    if (this.responseFormatMode === "json_schema") {
       requestBody.response_format = {
         type: "json_schema",
         json_schema: {
@@ -381,17 +402,21 @@ export class LMStudioAIService implements AIService {
           schema
         }
       };
+    } else if (this.responseFormatMode === "json_object") {
+      requestBody.response_format = {
+        type: "json_object"
+      };
     }
 
     if (this.reasoningEffort) {
       requestBody.reasoning = { effort: this.reasoningEffort };
     }
 
+    this.applyProviderPreferences(requestBody);
+
     const response = await fetch(`${this.baseUrl.replace(/\/$/, "")}/chat/completions`, {
       method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
+      headers: this.getRequestHeaders(),
       body: JSON.stringify(requestBody),
       signal: AbortSignal.timeout(this.timeoutMs)
     });
@@ -399,14 +424,33 @@ export class LMStudioAIService implements AIService {
     if (!response.ok) {
       const errorBody = await response.text().catch(() => "");
       throw new Error(
-        `Запрос к LM Studio завершился ошибкой: ${response.status}${errorBody ? ` ${errorBody.slice(0, 700)}` : ""}`
+        `Запрос к ${this.serviceName} завершился ошибкой: ${response.status}${errorBody ? ` ${errorBody.slice(0, 700)}` : ""}`
       );
     }
 
     const payload = (await response.json()) as ChatCompletionResponse;
     const content = payload.choices?.[0]?.message?.content;
-    if (!content) throw new Error("LM Studio вернула пустой ответ");
+    if (!content) throw new Error(`${this.serviceName} вернул пустой ответ`);
 
     return extractJson(content);
+  }
+
+  private getRequestHeaders() {
+    const headers: RequestHeaders = {
+      "content-type": "application/json",
+      ...this.extraHeaders
+    };
+
+    if (this.apiKey) {
+      headers.authorization = `Bearer ${this.apiKey}`;
+    }
+
+    return headers;
+  }
+
+  private applyProviderPreferences(requestBody: Record<string, unknown>) {
+    if (this.providerPreferences) {
+      requestBody.provider = this.providerPreferences;
+    }
   }
 }

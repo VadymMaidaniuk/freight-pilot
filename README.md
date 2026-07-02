@@ -37,6 +37,27 @@ LMSTUDIO_TOP_P=0.1
 LMSTUDIO_STRUCTURED_OUTPUT=true
 ```
 
+Для Vercel используйте OpenRouter:
+
+```bash
+AI_PROVIDER=openrouter
+OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_MODEL=google/gemma-4-26b-a4b-it:free
+OPENROUTER_PROVIDER_SLUG=google-ai-studio
+OPENROUTER_PROVIDER_ORDER=google-ai-studio
+OPENROUTER_PROVIDER_ONLY=google-ai-studio
+OPENROUTER_ALLOW_FALLBACKS=false
+OPENROUTER_REQUIRE_PARAMETERS=true
+OPENROUTER_RESPONSE_FORMAT=json_object
+OPENROUTER_TIMEOUT_MS=70000
+OPENROUTER_MAX_TOKENS=1800
+OPENROUTER_TEMPERATURE=0
+OPENROUTER_TOP_P=0.1
+OPENROUTER_APP_TITLE=FreightPilot
+```
+
+`google-ai-studio` - это provider slug OpenRouter для Google AI Studio. `PROVIDER_ONLY` и `ALLOW_FALLBACKS=false` фиксируют запросы на этом endpoint, а не на Darkbloom.
+
 Управляемое демо не требует LLM. Проверка AI использует настроенного провайдера и откатывается к валидированному результату фикстуры, если ответ не проходит Zod-валидацию.
 
 Если локальная reasoning-модель работает медленно, уменьшайте `LMSTUDIO_MAX_TOKENS`, но оставьте таймаут достаточно высоким:

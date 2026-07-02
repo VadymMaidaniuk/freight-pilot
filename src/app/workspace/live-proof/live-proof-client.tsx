@@ -72,7 +72,7 @@ export function LiveProofClient() {
               />
             </label>
             <div className="rounded-md border border-secondary-container bg-secondary-container/30 p-3 text-sm leading-6 text-on-secondary-container">
-              Настроенный локальный провайдер: <span className="font-mono">google/gemma-4-12b-qat</span> через LM Studio endpoint из окружения.
+              Серверный LLM берется из <span className="font-mono">AI_PROVIDER</span>. Для Vercel используйте <span className="font-mono">openrouter</span>.
             </div>
             <Button type="submit" disabled={result.state === "loading"}>
               {result.state === "loading" ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Bot className="h-4 w-4" aria-hidden />}
@@ -102,7 +102,7 @@ export function LiveProofClient() {
             </div>
           ) : null}
 
-          {result.state === "loading" ? <p className="text-sm text-muted-text">Ожидаем ответ LM Studio...</p> : null}
+          {result.state === "loading" ? <p className="text-sm text-muted-text">Ожидаем ответ LLM...</p> : null}
           {result.state === "error" ? <p className="text-sm text-on-error-container">{result.message}</p> : null}
           {result.state === "done" ? (
             <div className="space-y-3">

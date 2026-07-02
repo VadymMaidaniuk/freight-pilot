@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        message: "Проверка AI завершилась ошибкой до валидации. Проверьте доступность LM Studio или используйте режим фикстуры."
+        message: "Проверка AI завершилась ошибкой до валидации. Проверьте настроенный AI_PROVIDER или используйте режим фикстуры."
       },
       { status: 500 }
     );
