@@ -31,12 +31,16 @@ test("сценарные риски управляются данными", asyn
   await expect(page.getByText(/Температурный или рефрижераторный груз/i)).toBeVisible();
 });
 
-test("новый вставленный чат создает RFQ, подбирает агентов Китая и обрабатывает ответы", async ({ page }) => {
+test("ручная вставка создает RFQ, подбирает агентов Китая и обрабатывает ответы", async ({ page }) => {
   await page.request.post("/api/demo/reset");
   await page.goto("/workspace/new");
 
-  await page.getByLabel(/Чат \/ мессенджер/i).check();
-  await page.getByRole("button", { name: /Создать RFQ и подобрать агентов/i }).click();
+  await expect(page.getByRole("button", { name: /Проверить почту/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Проверить мессенджеры/i })).toBeVisible();
+  await page.getByRole("button", { name: /Проверить мессенджеры/i }).click();
+  await expect(page.getByText(/Интеграция мессенджеров пока не подключена/i)).toBeVisible();
+
+  await page.getByRole("button", { name: /Создать RFQ из текста/i }).click();
 
   await expect(page.getByRole("heading", { name: /Живой RFQ · Ningbo -> Hamburg/i })).toBeVisible();
   await expect(page.getByText("Ningbo Harbor Partners")).toBeVisible();

@@ -30,8 +30,8 @@ http://127.0.0.1:3000/workspace
 AI_PROVIDER=lmstudio
 LMSTUDIO_BASE_URL=http://192.168.50.232:1234/v1
 LMSTUDIO_MODEL=google/gemma-4-12b-qat
-LMSTUDIO_TIMEOUT_MS=10000
-LMSTUDIO_MAX_TOKENS=700
+LMSTUDIO_TIMEOUT_MS=60000
+LMSTUDIO_MAX_TOKENS=1800
 LMSTUDIO_TEMPERATURE=0
 LMSTUDIO_TOP_P=0.1
 LMSTUDIO_STRUCTURED_OUTPUT=true
@@ -39,11 +39,11 @@ LMSTUDIO_STRUCTURED_OUTPUT=true
 
 Управляемое демо не требует LLM. Проверка AI использует настроенного провайдера и откатывается к валидированному результату фикстуры, если ответ не проходит Zod-валидацию.
 
-Если локальная reasoning-модель работает медленно, используйте:
+Если локальная reasoning-модель работает медленно, уменьшайте `LMSTUDIO_MAX_TOKENS`, но оставьте таймаут достаточно высоким:
 
 ```bash
-LMSTUDIO_TIMEOUT_MS=7000
-LMSTUDIO_MAX_TOKENS=500
+LMSTUDIO_TIMEOUT_MS=60000
+LMSTUDIO_MAX_TOKENS=1200
 LMSTUDIO_TEMPERATURE=0
 LMSTUDIO_TOP_P=0.1
 LMSTUDIO_STRUCTURED_OUTPUT=true
@@ -76,9 +76,9 @@ npm audit --omit=dev
 
 Откройте `http://127.0.0.1:3000/workspace/new` или нажмите **Новый RFQ** во входящих.
 
-1. Выберите письмо, чат / мессенджер или заметки звонка.
-2. Вставьте синтетический текст клиента.
-3. Нажмите **Создать RFQ и подобрать агентов**.
+1. Для почты или мессенджеров нажмите **Проверить почту** / **Проверить мессенджеры**.
+2. Для ручного сценария вставьте синтетический текст клиента в **Ручная вставка запроса**.
+3. Нажмите **Создать RFQ из текста**.
 4. Проверьте извлеченные поля, доказательства, риски и рассчитанный короткий список агентов.
 5. Нажмите **Согласовать и имитировать отправку**.
 6. Нажмите **Обработать имитированные ответы**.

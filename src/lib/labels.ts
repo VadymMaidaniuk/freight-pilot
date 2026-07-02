@@ -3,7 +3,8 @@ import type { CaseStatus, ConfidenceLevel, RateOption, SourceType, VerificationS
 export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   email: "Письмо",
   conversation: "Чат",
-  call_notes: "Заметки звонка"
+  call_notes: "Заметки звонка",
+  manual_paste: "Ручная вставка"
 };
 
 export const CASE_STATUS_LABELS: Record<CaseStatus, string> = {

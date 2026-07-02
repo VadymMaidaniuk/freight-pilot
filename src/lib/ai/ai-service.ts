@@ -1,10 +1,11 @@
 import type { RateExtraction, RFQExtraction } from "./schemas";
+import type { SourceType } from "@/lib/types";
 
 export type AIProviderName = "fixture" | "claude" | "openrouter" | "lmstudio";
 
 export interface AIService {
   extractRFQ(input: {
-    sourceType: "email" | "conversation" | "call_notes";
+    sourceType: SourceType;
     rawText: string;
   }): Promise<RFQExtraction>;
 
@@ -21,7 +22,8 @@ export interface AIService {
 export class AIValidationFallbackError extends Error {
   constructor(
     message = "Оперативное извлечение не прошло безопасную валидацию. Использован безопасный демо-резерв.",
-    readonly fallbackPayload?: unknown
+    readonly fallbackPayload?: unknown,
+    readonly details?: string
   ) {
     super(message);
     this.name = "AIValidationFallbackError";

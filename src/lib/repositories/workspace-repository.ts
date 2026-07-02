@@ -60,6 +60,7 @@ function touchWorkspace() {
 function asSourceType(value: string): RFQInput["sourceType"] {
   if (value === "conversation" || value === "messenger") return "conversation";
   if (value === "call_notes") return "call_notes";
+  if (value === "manual_paste" || value === "paste") return "manual_paste";
   return "email";
 }
 

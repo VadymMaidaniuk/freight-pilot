@@ -33,6 +33,7 @@ export async function POST(request: Request) {
         ok: true,
         fallback: true,
         message: error.message,
+        details: error.details,
         result: error.fallbackPayload
       });
     }

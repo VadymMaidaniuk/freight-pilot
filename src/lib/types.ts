@@ -1,4 +1,4 @@
-export type SourceType = "email" | "conversation" | "call_notes";
+export type SourceType = "email" | "conversation" | "call_notes" | "manual_paste";
 export type VerificationStatus = "Confirmed" | "Needs confirmation" | "Missing" | "Conflict detected";
 export type ConfidenceLevel = "High" | "Medium" | "Low";
 export type CaseStatus =

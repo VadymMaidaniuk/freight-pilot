@@ -1,4 +1,5 @@
 import { Network } from "lucide-react";
+import { AgentFilters } from "./agent-filters";
 import { Badge } from "@/components/ui/badge";
 import { Panel, PanelBody, PanelHeader } from "@/components/ui/panel";
 import { demoSeed } from "@/lib/demo/seed-data";
@@ -31,23 +32,7 @@ export default async function AgentNetworkPage({ searchParams }: { searchParams:
             Справочник синтетических агентов в режиме просмотра. Подбор использует покрытие и прозрачные метрики, а не непрозрачный рейтинг надежности.
           </p>
         </div>
-        <form className="flex flex-wrap gap-2">
-          <select name="country" defaultValue={country} className="h-10 rounded-md border border-border-hairline bg-white px-3 text-sm outline-none">
-            <option value="">Все страны</option>
-            {countries.map((item) => (
-              <option key={item} value={item}>
-                {countryLabel(item)}
-              </option>
-            ))}
-          </select>
-          <select name="service" defaultValue={service} className="h-10 rounded-md border border-border-hairline bg-white px-3 text-sm outline-none">
-            <option value="">Все сервисы</option>
-            <option value="ocean_fcl">Морской FCL</option>
-            <option value="reefer">Рефгруз</option>
-            <option value="origin_handling">Обработка в порту отправления</option>
-          </select>
-          <button className="h-10 rounded-md bg-primary-container px-4 text-sm font-semibold text-white">Фильтр</button>
-        </form>
+        <AgentFilters countries={countries} country={country} service={service} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">

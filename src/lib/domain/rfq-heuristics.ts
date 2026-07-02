@@ -1,5 +1,6 @@
 import type { RFQExtraction } from "@/lib/ai";
 import { fieldLabel } from "@/lib/labels";
+import type { SourceType } from "@/lib/types";
 
 const knownPorts = [
   { city: "Ningbo", port: "Ningbo", country: "China" },
@@ -52,7 +53,7 @@ function findIncoterms(rawText: string) {
   return match?.[1]?.toUpperCase() ?? null;
 }
 
-export function heuristicExtractRFQ(sourceType: "email" | "conversation" | "call_notes", rawText: string): RFQExtraction {
+export function heuristicExtractRFQ(sourceType: SourceType, rawText: string): RFQExtraction {
   const ports = findPorts(rawText);
   const origin = ports[0];
   const destination = ports[1];

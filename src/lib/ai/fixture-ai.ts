@@ -1,5 +1,6 @@
 import type { AIService } from "./ai-service";
 import type { RateExtraction, RFQExtraction } from "./schemas";
+import type { SourceType } from "@/lib/types";
 
 const defaultExtraction: RFQExtraction = {
   fields: {
@@ -72,7 +73,7 @@ const defaultRate: RateExtraction = {
 };
 
 export class FixtureAIService implements AIService {
-  async extractRFQ(input?: { sourceType: "email" | "conversation" | "call_notes"; rawText: string }): Promise<RFQExtraction> {
+  async extractRFQ(input?: { sourceType: SourceType; rawText: string }): Promise<RFQExtraction> {
     void input;
     return defaultExtraction;
   }

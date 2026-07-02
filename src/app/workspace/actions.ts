@@ -25,12 +25,18 @@ export async function createQuoteAction(formData: FormData) {
 }
 
 export async function createRFQFromInputAction(formData: FormData) {
-  const sourceType = String(formData.get("sourceType") ?? "email");
+  const sourceType = String(formData.get("sourceType") ?? "manual_paste");
   const rawText = String(formData.get("rawText") ?? "");
   if (!rawText.trim()) redirect("/workspace/new?error=missing-input");
 
   const rfqCase = await createRFQFromPastedInput({ sourceType, rawText });
   redirect(`/workspace/cases/${rfqCase.id}`);
+}
+
+export async function checkIntakeIntegrationAction(formData: FormData) {
+  const channel = String(formData.get("channel") ?? "");
+  const checked = channel === "messenger" ? "messenger" : "email";
+  redirect(`/workspace/new?checked=${checked}`);
 }
 
 export async function processSimulatedRepliesAction(formData: FormData) {

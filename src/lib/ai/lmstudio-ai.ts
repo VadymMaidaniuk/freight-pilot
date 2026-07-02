@@ -1,6 +1,7 @@
 import { AIValidationFallbackError, type AIService } from "./ai-service";
 import { FixtureAIService } from "./fixture-ai";
 import { rateExtractionSchema, rfqExtractionSchema, type RateExtraction, type RFQExtraction } from "./schemas";
+import type { SourceType } from "@/lib/types";
 
 type ChatCompletionResponse = {
   choices?: Array<{
@@ -8,6 +9,11 @@ type ChatCompletionResponse = {
       content?: string;
     };
   }>;
+};
+
+type ValidationIssue = {
+  path?: Array<string | number>;
+  message?: string;
 };
 
 const nullableString = { type: ["string", "null"] };
@@ -145,21 +151,78 @@ function extractJson(content: string) {
   return trimmed;
 }
 
+function describeAIError(error: unknown) {
+  if (typeof error === "object" && error !== null && "issues" in error) {
+    const issues = (error as { issues?: ValidationIssue[] }).issues ?? [];
+    if (issues.length > 0) {
+      return issues
+        .slice(0, 8)
+        .map((issue) => `${issue.path?.join(".") || "root"}: ${issue.message ?? "validation failed"}`)
+        .join("; ");
+    }
+  }
+
+  if (error instanceof SyntaxError) {
+    return `JSON parse error: ${error.message}`;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return String(error);
+}
+
+function getErrorPosition(message: string) {
+  const match = message.match(/position\s+(\d+)/i);
+  return match ? Number(match[1]) : null;
+}
+
+function excerptAround(text: string, position: number | null) {
+  if (position === null || Number.isNaN(position)) return text.slice(0, 500);
+
+  const start = Math.max(0, position - 260);
+  const end = Math.min(text.length, position + 520);
+  return text.slice(start, end);
+}
+
+function parseJsonWithRepair(json: string) {
+  try {
+    return JSON.parse(json);
+  } catch (error) {
+    const repaired = json.replace(/,\s*([}\]])/g, "$1");
+    if (repaired !== json) {
+      try {
+        return JSON.parse(repaired);
+      } catch {
+        // Fall through to the original parse error with the original model output.
+      }
+    }
+
+    if (error instanceof SyntaxError) {
+      const position = getErrorPosition(error.message);
+      throw new SyntaxError(`${error.message}. Raw excerpt: ${excerptAround(json, position)}`);
+    }
+
+    throw error;
+  }
+}
+
 export class LMStudioAIService implements AIService {
   private readonly fallback = new FixtureAIService();
 
   constructor(
     private readonly baseUrl = process.env.LMSTUDIO_BASE_URL ?? "http://192.168.50.232:1234/v1",
     private readonly model = process.env.LMSTUDIO_MODEL ?? "google/gemma-4-12b-qat",
-    private readonly timeoutMs = Number(process.env.LMSTUDIO_TIMEOUT_MS ?? 10000),
-    private readonly maxTokens = Number(process.env.LMSTUDIO_MAX_TOKENS ?? 700),
+    private readonly timeoutMs = Number(process.env.LMSTUDIO_TIMEOUT_MS ?? 60000),
+    private readonly maxTokens = Number(process.env.LMSTUDIO_MAX_TOKENS ?? 1800),
     private readonly temperature = Number(process.env.LMSTUDIO_TEMPERATURE ?? 0),
     private readonly topP = Number(process.env.LMSTUDIO_TOP_P ?? 0.1),
     private readonly structuredOutput = process.env.LMSTUDIO_STRUCTURED_OUTPUT !== "false",
     private readonly reasoningEffort = process.env.LMSTUDIO_REASONING_EFFORT
   ) {}
 
-  async extractRFQ(input: { sourceType: "email" | "conversation" | "call_notes"; rawText: string }): Promise<RFQExtraction> {
+  async extractRFQ(input: { sourceType: SourceType; rawText: string }): Promise<RFQExtraction> {
     const prompt = [
       "Извлеки freight RFQ из пользовательского текста.",
       "Верни только JSON по этой форме:",
@@ -174,10 +237,10 @@ export class LMStudioAIService implements AIService {
 
     try {
       const json = await this.completeJson(prompt, "rfq_extraction", rfqExtractionJsonSchema);
-      return rfqExtractionSchema.parse(JSON.parse(json));
-    } catch {
+      return rfqExtractionSchema.parse(parseJsonWithRepair(json));
+    } catch (error) {
       const fallback = await this.fallback.extractRFQ(input);
-      throw new AIValidationFallbackError(undefined, fallback);
+      throw new AIValidationFallbackError(undefined, fallback, describeAIError(error));
     }
   }
 
@@ -194,10 +257,10 @@ export class LMStudioAIService implements AIService {
 
     try {
       const json = await this.completeJson(prompt, "rate_extraction", rateExtractionJsonSchema);
-      return rateExtractionSchema.parse(JSON.parse(json));
-    } catch {
+      return rateExtractionSchema.parse(parseJsonWithRepair(json));
+    } catch (error) {
       const fallback = await this.fallback.normalizeRateReply(input);
-      throw new AIValidationFallbackError(undefined, fallback);
+      throw new AIValidationFallbackError(undefined, fallback, describeAIError(error));
     }
   }
 
@@ -263,7 +326,10 @@ export class LMStudioAIService implements AIService {
     });
 
     if (!response.ok) {
-      throw new Error(`Запрос к LM Studio завершился ошибкой: ${response.status}`);
+      const errorBody = await response.text().catch(() => "");
+      throw new Error(
+        `Запрос к LM Studio завершился ошибкой: ${response.status}${errorBody ? ` ${errorBody.slice(0, 700)}` : ""}`
+      );
     }
 
     const payload = (await response.json()) as ChatCompletionResponse;

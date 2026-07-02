@@ -10,7 +10,7 @@ type ResultState =
   | { state: "idle" }
   | { state: "loading" }
   | { state: "error"; message: string }
-  | { state: "done"; fallback: boolean; message?: string; result: unknown };
+  | { state: "done"; fallback: boolean; message?: string; details?: string; result: unknown };
 
 export function LiveProofClient() {
   const [result, setResult] = useState<ResultState>({ state: "idle" });
@@ -32,6 +32,7 @@ export function LiveProofClient() {
       state: "done",
       fallback: Boolean(payload.fallback),
       message: payload.message,
+      details: payload.details,
       result: payload.result
     });
   }
@@ -106,6 +107,11 @@ export function LiveProofClient() {
           {result.state === "done" ? (
             <div className="space-y-3">
               {result.message ? <div className="rounded-md border border-tertiary-container bg-tertiary-container/15 p-3 text-sm text-on-tertiary-container">{result.message}</div> : null}
+              {result.details ? (
+                <div className="rounded-md border border-error/20 bg-error-container/50 p-3 text-sm leading-6 text-on-error-container">
+                  <span className="font-semibold">Причина fallback:</span> {result.details}
+                </div>
+              ) : null}
               <pre className="max-h-[520px] overflow-auto rounded-md border border-border-hairline bg-surface-navy p-4 text-xs leading-5 text-inverse-on-surface">
                 {JSON.stringify(result.result, null, 2)}
               </pre>
