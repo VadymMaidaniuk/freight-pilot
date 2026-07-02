@@ -268,12 +268,83 @@ export class LMStudioAIService implements AIService {
     return `Пожалуйста, подтвердите недостающие операционные поля для ${rfqCaseId} перед подготовкой финальной клиентской котировки.`;
   }
 
-  async generateRFQDraft(rfqCaseId: string, agentId: string) {
-    return `RFQ ${rfqCaseId}: пожалуйста, предоставьте ставку ocean FCL, срок действия, свободные дни, включения, исключения и транзитное время. Агент ${agentId}.`;
+  async generateRFQDraft(rfqCaseId: string, agentId: string, context?: string) {
+    if (!context) {
+      return `RFQ ${rfqCaseId}: пожалуйста, предоставьте ставку ocean FCL, срок действия, свободные дни, включения, исключения и транзитное время. Агент ${agentId}.`;
+    }
+
+    const prompt = [
+      "Сформируй короткий RFQ-запрос агенту на русском языке.",
+      "Верни только готовый текст письма без markdown.",
+      "Не добавляй факты, которых нет в контексте.",
+      `RFQ: ${rfqCaseId}`,
+      `Агент: ${agentId}`,
+      context
+    ].join("\n\n");
+
+    try {
+      return await this.completeText(prompt);
+    } catch {
+      return this.fallback.generateRFQDraft(rfqCaseId, agentId, context);
+    }
   }
 
-  async generateCustomerQuoteDraft(quoteId: string) {
-    return `Quote ${quoteId}: черновик создан на основе выбранной валидированной ставки. Требуется коммерческое согласование.`;
+  async generateCustomerQuoteDraft(quoteId: string, context?: string) {
+    if (!context) {
+      return `Quote ${quoteId}: черновик создан на основе выбранной валидированной ставки. Требуется коммерческое согласование.`;
+    }
+
+    const prompt = [
+      "Сформируй готовое письмо клиенту с freight quote.",
+      "Верни только письмо: Subject, приветствие, ставка, условия, мягкий call to action.",
+      "Пиши профессионально и кратко. Не добавляй факты, которых нет в контексте.",
+      `Quote: ${quoteId}`,
+      context
+    ].join("\n\n");
+
+    try {
+      return await this.completeText(prompt);
+    } catch {
+      return this.fallback.generateCustomerQuoteDraft(quoteId, context);
+    }
+  }
+
+  private async completeText(prompt: string) {
+    const response = await fetch(`${this.baseUrl.replace(/\/$/, "")}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        model: this.model,
+        temperature: this.temperature,
+        top_p: this.topP,
+        max_tokens: this.maxTokens,
+        stream: false,
+        messages: [
+          {
+            role: "system",
+            content: "Ты ассистент freight forwarding quote desk. Возвращай только финальный рабочий текст без рассуждений."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      }),
+      signal: AbortSignal.timeout(this.timeoutMs)
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text().catch(() => "");
+      throw new Error(`Запрос к LM Studio завершился ошибкой: ${response.status}${errorBody ? ` ${errorBody.slice(0, 700)}` : ""}`);
+    }
+
+    const payload = (await response.json()) as ChatCompletionResponse;
+    const content = payload.choices?.[0]?.message?.content?.trim();
+    if (!content) throw new Error("LM Studio вернула пустой ответ");
+
+    return content.replace(/```(?:text)?\s*([\s\S]*?)```/i, "$1").trim();
   }
 
   private async completeJson(prompt: string, schemaName: string, schema: object) {

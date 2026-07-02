@@ -21,6 +21,7 @@ export function buildQuoteDraft(input: {
   }
 
   const finalCustomerPrice = calculateFinalCustomerPrice(rate, commercialAdjustment);
+  const route = `${rfqCase.originPort ?? rfqCase.originCity} -> ${rfqCase.destinationPort ?? rfqCase.destinationCity}`;
 
   return {
     id: quoteVersionId,
@@ -33,15 +34,29 @@ export function buildQuoteDraft(input: {
     finalCustomerPrice,
     createdAt: new Date(),
     draftText: [
-      `Версия котировки ${versionNumber} для ${rfqCase.requestNumber}`,
-      `Маршрут: ${rfqCase.originPort ?? rfqCase.originCity} -> ${rfqCase.destinationPort ?? rfqCase.destinationCity}`,
-      `Груз: ${rfqCase.cargoDescription}`,
-      `Контейнеры: ${rfqCase.containerQuantity} x ${rfqCase.containerType}`,
-      `Выбранный вариант: ${rate.shippingLine}, ${rate.transitDays} дн., свободных дней: ${rate.freeDays}`,
-      `Известная сумма: ${rate.currency} ${rate.knownTotal}`,
-      `Коммерческая надбавка: ${rate.currency} ${commercialAdjustment}`,
-      `Финальная цена для клиента: ${rate.currency} ${finalCustomerPrice}`,
-      "Статус: черновик - требуется коммерческое согласование."
+      `Subject: Freight quote ${rfqCase.requestNumber} · ${route}`,
+      "",
+      "Здравствуйте,",
+      "",
+      `Подготовили ставку по вашему запросу ${route}.`,
+      "",
+      `Груз: ${rfqCase.cargoDescription ?? "по вашему запросу"}`,
+      `Контейнеры: ${rfqCase.containerQuantity ?? "?"} x ${rfqCase.containerType ?? "контейнер"}`,
+      `Условия: ${rfqCase.incoterms ?? "требуют подтверждения"}`,
+      `Перевозчик / линия: ${rate.shippingLine}`,
+      `Транзитное время: ${rate.transitDays} дн.`,
+      `Свободные дни: ${rate.freeDays}`,
+      `Включено: ${rate.inclusions.join(", ")}`,
+      `Исключено: ${rate.exclusions.join(", ")}`,
+      `Итоговая цена для клиента: ${rate.currency} ${finalCustomerPrice}`,
+      `Срок действия ставки: ${rate.validityDate}`,
+      "",
+      "Ставка действует при наличии места и оборудования. Готовы подтвердить букинг после вашего согласования.",
+      "",
+      "С уважением,",
+      "FreightPilot Quote Desk",
+      "",
+      `Internal note: Quote v${versionNumber}; known cost ${rate.currency} ${rate.knownTotal}; margin ${rate.currency} ${commercialAdjustment}.`
     ].join("\n")
   };
 }

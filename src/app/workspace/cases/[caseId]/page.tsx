@@ -1,4 +1,4 @@
-import { ArrowRight, FileSpreadsheet, History, Send, ShieldAlert } from "lucide-react";
+import { ArrowRight, ClipboardList, FileSpreadsheet, History, MailCheck, Send, ShieldAlert } from "lucide-react";
 import { notFound } from "next/navigation";
 import {
   approveRoutingAction,
@@ -25,6 +25,26 @@ export const dynamic = "force-dynamic";
 export default async function CaseWorkspacePage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = await params;
   const snapshot = await loadCaseSnapshot(caseId);
+  if (!snapshot && caseId.startsWith("case-live-")) {
+    return (
+      <div className="space-y-6 pb-20 md:pb-0">
+        <Panel>
+          <PanelHeader title="Live RFQ не найден" eyebrow="Локальное демо-хранилище" />
+          <PanelBody className="space-y-4">
+            <p className="max-w-2xl text-sm leading-6 text-muted-text">
+              Этот временный live-кейс не найден в локальном демо-хранилище. Такое могло произойти с кейсами, созданными до включения персистентного fallback-store.
+            </p>
+            <a
+              href="/workspace/new"
+              className="inline-flex h-10 items-center justify-center rounded-md border border-primary-container bg-primary-container px-4 text-sm font-semibold text-white transition hover:brightness-95"
+            >
+              Создать RFQ заново
+            </a>
+          </PanelBody>
+        </Panel>
+      </div>
+    );
+  }
   if (!snapshot) notFound();
 
   const matches = matchAgents({
@@ -45,6 +65,14 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
   const canProcessSimulatedReplies =
     snapshot.requests.some((request) => request.status === "Awaiting response" || request.status === "Sent") &&
     snapshot.rateOptions.length === 0;
+  const aiExtractionEvent = snapshot.activityEvents.find((event) => event.eventType === "ai_extraction");
+  const hasLiveExtraction = aiExtractionEvent?.title.startsWith("LLM извлекла");
+  const hasLLMNormalizedRates = snapshot.rateReplies.some((reply) => reply.processingResult === "llm_normalized_and_zod_validated");
+  const sentAgentCandidates = snapshot.round?.selectedAgentIds
+    .map((agentId) => snapshot.agents.find((agent) => agent.id === agentId))
+    .filter((agent): agent is (typeof snapshot.agents)[number] => Boolean(agent));
+  const agentRequestAgents =
+    sentAgentCandidates && sentAgentCandidates.length > 0 ? sentAgentCandidates : matches.slice(0, 3).map((match) => match.agent);
 
   return (
     <div className="space-y-6 pb-20 md:pb-0">
@@ -57,6 +85,9 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
               {snapshot.case.originCity} -&gt; {snapshot.case.destinationCity}
             </span>
             <CaseStatusBadge status={snapshot.case.status} />
+            {aiExtractionEvent ? <Badge tone={hasLiveExtraction ? "teal" : "amber"}>{hasLiveExtraction ? "LLM extracted" : "Fallback parsed"}</Badge> : null}
+            {hasLLMNormalizedRates ? <Badge tone="teal">LLM normalized rates</Badge> : null}
+            {currentVersion ? <Badge tone="blue">Client email ready</Badge> : null}
           </div>
           <h1 className="mt-2 text-display-lg font-semibold text-ink-text">{snapshot.scenario.title}</h1>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-text">
@@ -104,6 +135,13 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
             <Field label="Incoterms" value={snapshot.case.incoterms ?? "Нет данных"} />
             <Field label="Готовность груза" value={snapshot.case.cargoReadyDate ?? snapshot.case.cargoReadyInfo ?? "Нет данных"} />
             <Field label="Объем сервиса" value={snapshot.case.serviceScope ?? "Нет данных"} />
+            <div className="rounded-md border border-border-hairline bg-surface-container-lowest p-3">
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink-text">
+                <ClipboardList className="h-4 w-4 text-primary" aria-hidden />
+                Исходный текст клиента
+              </div>
+              <p className="max-h-40 overflow-auto whitespace-pre-line text-xs leading-5 text-muted-text">{snapshot.input.rawText}</p>
+            </div>
             <div className="border-t border-border-hairline pt-4">
               <p className="mb-2 text-label-caps uppercase tracking-wide text-muted-text">Извлеченные поля</p>
               <div className="space-y-2">
@@ -135,7 +173,7 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                   </div>
                   <div>
                     <p className="font-semibold text-ink-text">{event.title}</p>
-                    <p className="text-sm leading-6 text-muted-text">{event.body}</p>
+                    <p className="max-h-72 overflow-auto whitespace-pre-line text-sm leading-6 text-muted-text">{event.body}</p>
                   </div>
                 </div>
               ))}
@@ -143,7 +181,7 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
           </Panel>
 
           <Panel>
-            <PanelHeader title="Сравнение ставок" eyebrow="Детерминированное ранжирование" />
+            <PanelHeader title="Сравнение ставок" eyebrow="LLM-нормализация + проверяемое ранжирование" />
             <div className="overflow-x-auto">
               <table className="data-table">
                 <thead>
@@ -178,6 +216,34 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                 </tbody>
               </table>
             </div>
+            {snapshot.rateReplies.length > 0 ? (
+              <PanelBody className="border-t border-border-hairline">
+                <p className="mb-3 text-label-caps uppercase tracking-wide text-muted-text">Raw ответы агентов в normalized rates</p>
+                <div className="space-y-3">
+                  {snapshot.rateReplies.map((reply) => {
+                    const agent = snapshot.agents.find((item) => item.id === reply.agentId);
+                    const rate = snapshot.rateOptions.find((item) => item.replyId === reply.id);
+
+                    return (
+                      <div key={reply.id} className="rounded-md border border-border-hairline bg-surface-container-lowest p-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <p className="font-semibold text-ink-text">{agent?.companyName ?? reply.agentId}</p>
+                          <Badge tone={reply.processingResult === "llm_normalized_and_zod_validated" ? "teal" : "amber"}>
+                            {processingResultLabel(reply.processingResult)}
+                          </Badge>
+                        </div>
+                        <p className="mt-2 max-h-28 overflow-auto whitespace-pre-line border-l-2 border-ai-marker pl-3 text-xs leading-5 text-muted-text">{reply.rawText}</p>
+                        {rate ? (
+                          <p className="mt-2 text-xs leading-5 text-muted-text">
+                            Нормализовано: {formatMoney(rate.knownTotal, rate.currency)}, transit {rate.transitDays} дн., free days {rate.freeDays}, completeness {rate.completenessScore}%.
+                          </p>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </PanelBody>
+            ) : null}
           </Panel>
         </div>
 
@@ -190,6 +256,9 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                   <p className="text-label-caps uppercase tracking-wide text-primary">Рекомендовано</p>
                   <p className="mt-1 font-semibold text-ink-text">
                     {snapshot.agents.find((agent) => agent.id === recommended.agentId)?.companyName}
+                  </p>
+                  <p className="mt-2 text-sm leading-5 text-muted-text">
+                    LLM приводит ответы агентов к общей схеме. Выбор ниже считается проверяемыми правилами, чтобы менеджер мог объяснить решение.
                   </p>
                   <ul className="mt-3 space-y-2 text-sm leading-5 text-muted-text">
                     {explainRecommendation(recommended, snapshot.rateOptions).map((reason) => (
@@ -248,7 +317,7 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
           </Panel>
 
           <Panel>
-            <PanelHeader title="Короткий список агентов" eyebrow="Расчет по покрытию и метрикам" />
+            <PanelHeader title="Короткий список агентов" eyebrow="Покрытие, специализация и история ответов" />
             <PanelBody className="space-y-3">
               {matches.slice(0, 5).map((match) => (
                 <div key={match.agent.id} className="rounded-md border border-border-hairline bg-white p-3">
@@ -264,6 +333,30 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                   </p>
                 </div>
               ))}
+
+              <div className="rounded-md border border-secondary-container bg-secondary-container/25 p-3">
+                <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink-text">
+                  <MailCheck className="h-4 w-4 text-primary" aria-hidden />
+                  Черновики RFQ агентам
+                </div>
+                <div className="space-y-2">
+                  {agentRequestAgents.slice(0, 3).map((agent) => (
+                    <details key={agent.id} className="rounded-md border border-border-hairline bg-white p-2">
+                      <summary className="cursor-pointer text-sm font-semibold text-ink-text">
+                        {agent.companyName}
+                        {snapshot.requests.some((request) => request.agentId === agent.id) ? (
+                          <span className="ml-2 text-xs font-normal text-muted-text">
+                            {snapshot.requests.find((request) => request.agentId === agent.id)?.status}
+                          </span>
+                        ) : null}
+                      </summary>
+                      <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded-md bg-surface-navy p-3 text-xs leading-5 text-inverse-on-surface">
+                        {buildAgentRFQPreview(snapshot.case, agent.companyName)}
+                      </pre>
+                    </details>
+                  ))}
+                </div>
+              </div>
 
               {snapshot.case.status === "ready_for_routing" ? (
                 <form action={approveRoutingAction} className="space-y-2">
@@ -281,10 +374,10 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
           </Panel>
 
           <Panel>
-            <PanelHeader title="История котировок" eyebrow="Версионирование" />
+            <PanelHeader title="Письмо клиенту" eyebrow="Quote versioning" />
             <PanelBody className="space-y-3">
               {snapshot.quoteVersions.length === 0 ? (
-                <p className="text-sm text-muted-text">Клиентская котировка пока не создана.</p>
+                <p className="text-sm text-muted-text">Клиентское письмо появится после создания Quote v1.</p>
               ) : (
                 snapshot.quoteVersions
                   .sort((a, b) => b.versionNumber - a.versionNumber)
@@ -295,6 +388,10 @@ export default async function CaseWorkspacePage({ params }: { params: Promise<{ 
                         <p className="font-mono text-sm tabular-nums">{formatMoney(version.finalCustomerPrice)}</p>
                       </div>
                       <p className="mt-1 text-xs text-muted-text">Черновик - требуется коммерческое согласование</p>
+                      <p className="mt-3 text-label-caps uppercase tracking-wide text-muted-text">Готовый email клиенту</p>
+                      <pre className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap rounded-md bg-surface-navy p-3 text-xs leading-5 text-inverse-on-surface">
+                        {version.draftText}
+                      </pre>
                     </div>
                   ))
               )}
@@ -322,4 +419,34 @@ function Field({ label, value }: { label: string; value: string }) {
       <p className="text-sm font-medium text-ink-text">{value}</p>
     </div>
   );
+}
+
+function processingResultLabel(result: string) {
+  if (result === "llm_normalized_and_zod_validated") return "LLM + Zod";
+  if (result === "llm_fallback_demo_safe_normalization") return "Fallback";
+  if (result === "deterministic_fixture_normalization") return "Fixture";
+  return result.replaceAll("_", " ");
+}
+
+function buildAgentRFQPreview(rfqCase: { requestNumber: string; originPort: string | null; originCity: string | null; destinationPort: string | null; destinationCity: string | null; cargoDescription: string | null; containerQuantity: number | null; containerType: string | null; incoterms: string | null; cargoReadyDate: string | null; cargoReadyInfo: string | null; serviceScope: string | null }, agentName: string) {
+  const route = `${rfqCase.originPort ?? rfqCase.originCity ?? "origin TBD"} -> ${rfqCase.destinationPort ?? rfqCase.destinationCity ?? "destination TBD"}`;
+
+  return [
+    `To: ${agentName}`,
+    `Subject: RFQ ${rfqCase.requestNumber} · ${route}`,
+    "",
+    "Здравствуйте,",
+    "",
+    "Просим предоставить ставку по следующему запросу:",
+    `Маршрут: ${route}`,
+    `Груз: ${rfqCase.cargoDescription ?? "уточняется"}`,
+    `Контейнеры: ${rfqCase.containerQuantity ?? "?"} x ${rfqCase.containerType ?? "контейнер"}`,
+    `Incoterms: ${rfqCase.incoterms ?? "уточняется"}`,
+    `Готовность груза: ${rfqCase.cargoReadyDate ?? rfqCase.cargoReadyInfo ?? "уточняется"}`,
+    `Объем сервиса: ${rfqCase.serviceScope ?? "ocean FCL + локальные сборы"}`,
+    "",
+    "Пожалуйста, включите ocean freight, локальные сборы отправления и назначения, документацию, transit time, free days, validity, inclusions/exclusions и условия по оборудованию.",
+    "",
+    "Спасибо."
+  ].join("\n");
 }

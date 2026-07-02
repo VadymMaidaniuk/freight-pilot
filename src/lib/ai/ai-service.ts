@@ -15,8 +15,8 @@ export interface AIService {
   }): Promise<RateExtraction>;
 
   generateClarificationDraft(rfqCaseId: string): Promise<string>;
-  generateRFQDraft(rfqCaseId: string, agentId: string): Promise<string>;
-  generateCustomerQuoteDraft(quoteId: string): Promise<string>;
+  generateRFQDraft(rfqCaseId: string, agentId: string, context?: string): Promise<string>;
+  generateCustomerQuoteDraft(quoteId: string, context?: string): Promise<string>;
 }
 
 export class AIValidationFallbackError extends Error {

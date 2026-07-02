@@ -1,7 +1,8 @@
-import { ClipboardPaste, Mail, MessageSquareText, RefreshCw, Send } from "lucide-react";
+import { ClipboardPaste, Mail, MessageSquareText, RefreshCw } from "lucide-react";
 import { checkIntakeIntegrationAction, createRFQFromInputAction } from "@/app/workspace/actions";
 import { Button } from "@/components/ui/button";
 import { Panel, PanelBody, PanelHeader } from "@/components/ui/panel";
+import { CreateRFQSubmitButton } from "./create-rfq-submit-button";
 
 export const dynamic = "force-dynamic";
 
@@ -116,10 +117,7 @@ export default async function NewRFQPage({ searchParams }: { searchParams: Promi
               После создания откройте кейс, проверьте извлеченные поля и короткий список, затем согласуйте имитацию отправки выбранным агентам.
             </div>
 
-            <Button type="submit">
-              <Send className="h-4 w-4" aria-hidden />
-              Создать RFQ из текста
-            </Button>
+            <CreateRFQSubmitButton />
           </form>
         </PanelBody>
       </Panel>

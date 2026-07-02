@@ -1,3 +1,7 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { createHash } from "node:crypto";
 import { demoSeed } from "@/lib/demo/seed-data";
 import type { DemoSeed } from "@/lib/types";
 
@@ -25,11 +29,56 @@ function cloneSeed(): DemoSeed {
 
 let store = cloneSeed();
 
+function persistenceDisabled() {
+  return process.env.VITEST === "true";
+}
+
+function persistencePath() {
+  const workspaceKey = createHash("sha1").update(process.cwd()).digest("hex").slice(0, 10);
+  return path.join(tmpdir(), "freight-pilot", `fallback-store-${workspaceKey}.json`);
+}
+
+function reviveStore(input: DemoSeed): DemoSeed {
+  return {
+    ...input,
+    metrics: input.metrics.map((item) => ({ ...item, lastObservedAt: new Date(item.lastObservedAt) })),
+    requests: input.requests.map((item) => ({ ...item, sentAt: item.sentAt ? new Date(item.sentAt) : null })),
+    rateReplies: input.rateReplies.map((item) => ({ ...item, receivedAt: new Date(item.receivedAt) })),
+    quoteVersions: input.quoteVersions.map((item) => ({ ...item, createdAt: new Date(item.createdAt) })),
+    activityEvents: input.activityEvents.map((item) => ({ ...item, createdAt: new Date(item.createdAt) }))
+  };
+}
+
+function loadPersistedStore() {
+  if (persistenceDisabled()) return null;
+
+  const filePath = persistencePath();
+  if (!existsSync(filePath)) return null;
+
+  try {
+    return reviveStore(JSON.parse(readFileSync(filePath, "utf8")) as DemoSeed);
+  } catch {
+    return null;
+  }
+}
+
+export function persistFallbackStore() {
+  if (persistenceDisabled()) return;
+
+  const filePath = persistencePath();
+  mkdirSync(path.dirname(filePath), { recursive: true });
+  writeFileSync(filePath, JSON.stringify(store), "utf8");
+}
+
+store = loadPersistedStore() ?? store;
+
 export function getFallbackStore() {
+  store = loadPersistedStore() ?? store;
   return store;
 }
 
 export function resetFallbackStore() {
   store = cloneSeed();
+  persistFallbackStore();
   return store;
 }

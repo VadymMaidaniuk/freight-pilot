@@ -87,11 +87,31 @@ export class FixtureAIService implements AIService {
     return defaultExtraction.clarificationDraft;
   }
 
-  async generateRFQDraft(_rfqCaseId: string, agentId: string) {
-    return `Пожалуйста, предоставьте полную ставку ocean FCL по этому RFQ, включая основные локальные сборы, срок действия, транзитное время, свободные дни, исключения и условия. Агент: ${agentId}.`;
+  async generateRFQDraft(_rfqCaseId: string, agentId: string, context?: string) {
+    return [
+      `Пожалуйста, предоставьте полную ставку ocean FCL по этому RFQ. Агент: ${agentId}.`,
+      "Нужно раскрыть ocean freight, локальные сборы отправления и назначения, документацию, срок действия, транзит, free days, исключения и условия.",
+      context ? `Контекст RFQ:\n${context}` : null
+    ]
+      .filter(Boolean)
+      .join("\n\n");
   }
 
-  async generateCustomerQuoteDraft(quoteId: string) {
-    return `Черновик клиентской котировки ${quoteId}. Статус: черновик - требуется коммерческое согласование.`;
+  async generateCustomerQuoteDraft(quoteId: string, context?: string) {
+    return [
+      `Subject: Freight quote ${quoteId}`,
+      "",
+      "Здравствуйте,",
+      "",
+      "Подготовили ставку по вашему запросу. Ниже приведены маршрут, контейнеры, выбранный вариант перевозки, итоговая цена и ключевые условия.",
+      context,
+      "",
+      "Ставка действует при наличии места и оборудования. Готовы подтвердить букинг после вашего согласования.",
+      "",
+      "С уважением,",
+      "FreightPilot Quote Desk"
+    ]
+      .filter(Boolean)
+      .join("\n");
   }
 }

@@ -45,7 +45,7 @@ import type {
   ReplyPlan,
   WorkspaceSummary
 } from "@/lib/types";
-import { getFallbackStore, resetFallbackStore } from "./fallback-store";
+import { getFallbackStore, persistFallbackStore, resetFallbackStore } from "./fallback-store";
 
 const tenantId = process.env.DEMO_TENANT_ID ?? "demo_freightpilot";
 
@@ -67,6 +67,58 @@ function asSourceType(value: string): RFQInput["sourceType"] {
 function deriveInitialStatus(rfqCase: RFQCase): RFQCase["status"] {
   if (evaluateManualReview(rfqCase).required) return "manual_review";
   return canSendAgentRFQ(rfqCase).allowed ? "ready_for_routing" : "clarification_required";
+}
+
+function isLiveAIEnabled() {
+  return (process.env.AI_PROVIDER ?? "fixture") !== "fixture";
+}
+
+function routeFor(rfqCase: RFQCase) {
+  return `${rfqCase.originPort ?? rfqCase.originCity ?? "origin TBD"} -> ${rfqCase.destinationPort ?? rfqCase.destinationCity ?? "destination TBD"}`;
+}
+
+function buildAgentRFQDraft(input: { rfqCase: RFQCase; agent: Agent }) {
+  const { rfqCase, agent } = input;
+
+  return [
+    `To: ${agent.companyName}`,
+    `Subject: RFQ ${rfqCase.requestNumber} · ${routeFor(rfqCase)}`,
+    "",
+    "Здравствуйте,",
+    "",
+    "Просим предоставить ставку по следующему запросу:",
+    `Маршрут: ${routeFor(rfqCase)}`,
+    `Груз: ${rfqCase.cargoDescription ?? "уточняется"}`,
+    `Контейнеры: ${rfqCase.containerQuantity ?? "?"} x ${rfqCase.containerType ?? "контейнер"}`,
+    `Incoterms: ${rfqCase.incoterms ?? "уточняется"}`,
+    `Готовность груза: ${rfqCase.cargoReadyDate ?? rfqCase.cargoReadyInfo ?? "уточняется"}`,
+    `Объем сервиса: ${rfqCase.serviceScope ?? "ocean FCL + локальные сборы"}`,
+    "",
+    "Пожалуйста, включите ocean freight, локальные сборы отправления и назначения, документацию, transit time, free days, validity, inclusions/exclusions и условия по оборудованию.",
+    "",
+    "Спасибо."
+  ].join("\n");
+}
+
+function buildCustomerQuoteContext(input: { rfqCase: RFQCase; rate: RateOption; commercialAdjustment: number; finalCustomerPrice: number }) {
+  const { rfqCase, rate, commercialAdjustment, finalCustomerPrice } = input;
+
+  return [
+    `Маршрут: ${routeFor(rfqCase)}`,
+    `Груз: ${rfqCase.cargoDescription ?? "не указан"}`,
+    `Контейнеры: ${rfqCase.containerQuantity ?? "?"} x ${rfqCase.containerType ?? "контейнер"}`,
+    `Incoterms: ${rfqCase.incoterms ?? "требует подтверждения"}`,
+    `Линия: ${rate.shippingLine}`,
+    `Транзит: ${rate.transitDays} дн.`,
+    `Свободные дни: ${rate.freeDays}`,
+    `Включено: ${rate.inclusions.join(", ")}`,
+    `Исключено: ${rate.exclusions.join(", ")}`,
+    `Известная себестоимость: ${rate.currency} ${rate.knownTotal}`,
+    `Коммерческая надбавка: ${rate.currency} ${commercialAdjustment}`,
+    `Финальная цена клиенту: ${rate.currency} ${finalCustomerPrice}`,
+    `Срок действия: ${rate.validityDate}`,
+    `Условия: ${rate.conditions.join(", ")}`
+  ].join("\n");
 }
 
 function buildDynamicCaseRecords(input: {
@@ -419,6 +471,28 @@ export async function createQuoteFromRate(caseId: string, rateOptionId: string, 
     versionNumber,
     commercialAdjustment
   });
+  let quoteDraftMode = "Системный шаблон подготовил письмо клиенту.";
+
+  if (isLiveAIEnabled()) {
+    try {
+      const ai = createAIService();
+      version.draftText = await ai.generateCustomerQuoteDraft(
+        quoteId,
+        buildCustomerQuoteContext({
+          rfqCase: snapshot.case,
+          rate,
+          commercialAdjustment,
+          finalCustomerPrice: version.finalCustomerPrice
+        })
+      );
+      quoteDraftMode = "LLM подготовила письмо клиенту на основе выбранной валидированной ставки.";
+    } catch (error) {
+      quoteDraftMode =
+        error instanceof Error
+          ? `LLM-письмо не прошло, использован системный шаблон. Причина: ${error.message}`
+          : "LLM-письмо не прошло, использован системный шаблон.";
+    }
+  }
 
   if (!hasDatabaseUrl()) {
     const store = getFallbackStore();
@@ -432,8 +506,11 @@ export async function createQuoteFromRate(caseId: string, rateOptionId: string, 
         status: "Черновик - требуется коммерческое согласование"
       });
     } else {
-      existingQuote.currentVersion = versionNumber;
-      existingQuote.selectedRateOptionId = rateOptionId;
+      const storeQuote = store.quotes.find((quote) => quote.id === existingQuote.id);
+      if (storeQuote) {
+        storeQuote.currentVersion = versionNumber;
+        storeQuote.selectedRateOptionId = rateOptionId;
+      }
     }
     store.quoteVersions.push(version);
     const rfqCase = store.cases.find((item) => item.id === caseId);
@@ -447,9 +524,10 @@ export async function createQuoteFromRate(caseId: string, rateOptionId: string, 
       caseId,
       eventType: "quote_version",
       title: `Quote v${versionNumber} создана`,
-      body: `Менеджер выбрал ставку ${rate.shippingLine}. Существующие версии котировок не изменялись.`,
+      body: `Менеджер выбрал ставку ${rate.shippingLine}. ${quoteDraftMode} Существующие версии котировок не изменялись.`,
       createdAt: new Date()
     });
+    persistFallbackStore();
     touchWorkspace();
     return version;
   }
@@ -482,7 +560,7 @@ export async function createQuoteFromRate(caseId: string, rateOptionId: string, 
     caseId,
     eventType: "quote_version",
     title: `Quote v${versionNumber} создана`,
-    body: `Менеджер выбрал ставку ${rate.shippingLine}. Существующие версии котировок не изменялись.`,
+    body: `Менеджер выбрал ставку ${rate.shippingLine}. ${quoteDraftMode} Существующие версии котировок не изменялись.`,
     createdAt: new Date()
   });
 
@@ -508,6 +586,7 @@ export async function receiveLateExcelRate(caseId: string) {
         createdAt: new Date()
       });
     }
+    persistFallbackStore();
     touchWorkspace();
     return;
   }
@@ -534,18 +613,29 @@ export async function receiveLateExcelRate(caseId: string) {
 export async function createRFQFromPastedInput(input: { sourceType: string; rawText: string }) {
   const sourceType = asSourceType(input.sourceType);
   let extraction: RFQExtraction;
+  let extractionEvent = {
+    title: "RFQ извлечен резервным парсером",
+    body: "AI_PROVIDER=fixture, поэтому демо использовало локальный эвристический парсер без обращения к LLM."
+  };
 
-  if ((process.env.AI_PROVIDER ?? "fixture") === "fixture") {
+  if (!isLiveAIEnabled()) {
     extraction = heuristicExtractRFQ(sourceType, input.rawText);
   } else {
     const ai = createAIService();
     try {
       extraction = await ai.extractRFQ({ sourceType, rawText: input.rawText });
+      extractionEvent = {
+        title: "LLM извлекла RFQ из текста клиента",
+        body: "LM Studio вернула валидную JSON-структуру, Zod проверил схему, затем система сохранила RFQ-кейс и evidence по полям."
+      };
     } catch (error) {
-      if (!(error instanceof AIValidationFallbackError)) {
-        console.error(error);
-      }
+      const details = error instanceof AIValidationFallbackError ? error.details : error instanceof Error ? error.message : String(error);
+      if (!(error instanceof AIValidationFallbackError)) console.error(error);
       extraction = heuristicExtractRFQ(sourceType, input.rawText);
+      extractionEvent = {
+        title: "LLM fallback: RFQ извлечен безопасным парсером",
+        body: `Модель не дала валидный ответ для production-схемы. Использован резервный парсер, чтобы демо-flow не остановился.${details ? ` Причина: ${details}` : ""}`
+      };
     }
   }
 
@@ -563,6 +653,15 @@ export async function createRFQFromPastedInput(input: { sourceType: string; rawT
   if (extraction.assertions.length === 0) extraction.assertions = heuristic.assertions;
 
   const records = buildDynamicCaseRecords({ sourceType, rawText: input.rawText, extraction });
+  records.events.unshift({
+    id: `event-${records.rfqCase.id}-ai-extraction`,
+    tenantId,
+    caseId: records.rfqCase.id,
+    eventType: "ai_extraction",
+    title: extractionEvent.title,
+    body: extractionEvent.body,
+    createdAt: new Date()
+  });
 
   if (!hasDatabaseUrl()) {
     const store = getFallbackStore();
@@ -571,6 +670,7 @@ export async function createRFQFromPastedInput(input: { sourceType: string; rawT
     store.cases.push(records.rfqCase);
     store.fieldAssertions.push(...records.assertions);
     store.activityEvents.unshift(...records.events);
+    persistFallbackStore();
     touchWorkspace();
     return records.rfqCase;
   }
@@ -595,9 +695,10 @@ export async function processSimulatedAgentReplies(caseId: string) {
   const selectedRequests = snapshot.requests.slice(0, 3);
   if (selectedRequests.length === 0) throw new Error("Имитированные запросы агентам не найдены");
 
-  const ai = (process.env.AI_PROVIDER ?? "fixture") === "fixture" ? null : createAIService();
+  const ai = isLiveAIEnabled() ? createAIService() : null;
   const replyRows: RateReply[] = [];
   const rateRows: RateOption[] = [];
+  const normalizationNotes: string[] = [];
   const now = new Date();
 
   for (const [index, request] of selectedRequests.entries()) {
@@ -614,11 +715,15 @@ export async function processSimulatedAgentReplies(caseId: string) {
           rawText: synthetic.rawText,
           sourceType: index === 2 ? "messy_text" : "email"
         });
+        processingResult = "llm_normalized_and_zod_validated";
+        normalizationNotes.push(`${agent.companyName}: LLM normalized -> ${normalized.currency} ${normalized.oceanFreight}, completeness ${normalized.completenessScore}%.`);
       } catch {
-        processingResult = "demo_safe_normalization";
+        processingResult = "llm_fallback_demo_safe_normalization";
+        normalizationNotes.push(`${agent.companyName}: LLM fallback, demo-safe normalizer used.`);
       }
     } else {
       processingResult = "deterministic_fixture_normalization";
+      normalizationNotes.push(`${agent.companyName}: deterministic fixture normalizer used.`);
     }
 
     const replyId = `reply-${caseId}-${agent.id}`;
@@ -690,10 +795,14 @@ export async function processSimulatedAgentReplies(caseId: string) {
       tenantId,
       caseId,
       eventType: "rate_replies_processed",
-      title: "Имитированные ответы агентов обработаны",
-      body: "Текст ответов агентов нормализован, проверен и преобразован в сопоставимые варианты ставок.",
+      title: ai ? "LLM нормализовала ответы агентов" : "Имитированные ответы агентов обработаны",
+      body: [
+        "Raw ответы агентов преобразованы в сопоставимые rate options: ocean freight, локальные сборы, validity, free days, completeness и review flag.",
+        ...normalizationNotes
+      ].join("\n"),
       createdAt: now
     });
+    persistFallbackStore();
     touchWorkspace();
     return;
   }
@@ -715,16 +824,32 @@ export async function processSimulatedAgentReplies(caseId: string) {
     tenantId,
     caseId,
     eventType: "rate_replies_processed",
-    title: "Имитированные ответы агентов обработаны",
-    body: "Текст ответов агентов нормализован, проверен и преобразован в сопоставимые варианты ставок.",
+    title: ai ? "LLM нормализовала ответы агентов" : "Имитированные ответы агентов обработаны",
+    body: [
+      "Raw ответы агентов преобразованы в сопоставимые rate options: ocean freight, локальные сборы, validity, free days, completeness и review flag.",
+      ...normalizationNotes
+    ].join("\n"),
     createdAt: now
   });
   touchWorkspace();
 }
 
 export async function approveForRouting(caseId: string, agentIds: string[]) {
+  const snapshot = await loadCaseSnapshot(caseId);
+  if (!snapshot) throw new Error("RFQ-кейс не найден");
+
   const roundId = `round-${caseId}-approved`;
   const selected = agentIds.slice(0, 3);
+  const selectedAgents = selected
+    .map((agentId) => snapshot.agents.find((agent) => agent.id === agentId))
+    .filter(Boolean) as Agent[];
+  const agentDrafts = selectedAgents.map((agent) => buildAgentRFQDraft({ rfqCase: snapshot.case, agent }));
+  const approvalEventBody = [
+    `Создана имитация отправки для ${selected.length} выбранных агентов. Реальные внешние письма не отправлялись.`,
+    "",
+    "Черновики RFQ, которые система подготовила для отправки:",
+    agentDrafts.join("\n\n---\n\n")
+  ].join("\n");
 
   if (!hasDatabaseUrl()) {
     const store = getFallbackStore();
@@ -757,9 +882,10 @@ export async function approveForRouting(caseId: string, agentIds: string[]) {
       caseId,
       eventType: "rfq_sent",
       title: "Черновики RFQ отправлены агентам",
-      body: `Создана имитация отправки для ${selected.length} выбранных агентов. Реальные внешние письма не отправлялись.`,
+      body: approvalEventBody,
       createdAt: new Date()
     });
+    persistFallbackStore();
     touchWorkspace();
     return;
   }
@@ -791,7 +917,7 @@ export async function approveForRouting(caseId: string, agentIds: string[]) {
     caseId,
     eventType: "rfq_sent",
     title: "Черновики RFQ отправлены агентам",
-    body: `Создана имитация отправки для ${selected.length} выбранных агентов. Реальные внешние письма не отправлялись.`,
+    body: approvalEventBody,
     createdAt: new Date()
   });
   touchWorkspace();
@@ -811,6 +937,7 @@ export async function overrideManualReview(caseId: string) {
       body: "Менеджер разрешил продолжить маршрутизацию. Риск-флаги остаются привязанными к кейсу.",
       createdAt: new Date()
     });
+    persistFallbackStore();
     touchWorkspace();
     return;
   }
